@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="robots" content="noindex"><meta><title>Category: Java - powercat</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="powercat"><meta name="msapplication-TileImage" content="/img/favicon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="powercat"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta property="og:type" content="blog"><meta property="og:title" content="powercat"><meta property="og:url" content="http://example.com/"><meta property="og:site_name" content="powercat"><meta property="og:locale" content="en_US"><meta property="og:image" content="http://example.com/img/og_image.png"><meta property="article:author" content="John Doe"><meta property="twitter:card" content="summary"><meta property="twitter:image:src" content="http://example.com/img/og_image.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://example.com"},"headline":"powercat","image":["http://example.com/img/og_image.png"],"author":{"@type":"Person","name":"John Doe"},"publisher":{"@type":"Organization","name":"powercat","logo":{"@type":"ImageObject","url":"http://example.com/img/logo.svg"}},"description":""}</script><link rel="icon" href="/img/favicon.svg"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/5.15.2/css/all.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css"><link rel="stylesheet"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><!--!--><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/cookieconsent/3.1.1/cookieconsent.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/lightgallery/1.10.0/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.8.1/css/justifiedGallery.min.css"><!--!--><!--!--><style>.pace{-webkit-pointer-events:none;pointer-events:none;-webkit-user-select:none;-moz-user-select:none;user-select:none}.pace-inactive{display:none}.pace .pace-progress{background:#3273dc;position:fixed;z-index:2000;top:0;right:100%;width:100%;height:2px}</style><script src="https://cdnjs.loli.net/ajax/libs/pace/1.2.4/pace.min.js"></script><!--!--><!--!--><!-- hexo injector head_end start --><script>
+  (function () {
+      function switchTab() {
+          if (!location.hash) {
+            return;
+          }
+          Array
+              .from(document.querySelectorAll('.tab-content'))
+              .forEach($tab => {
+                  $tab.classList.add('is-hidden');
+              });
+          Array
+              .from(document.querySelectorAll('.tabs li'))
+              .forEach($tab => {
+                  $tab.classList.remove('is-active');
+              });
+          const $activeTab = document.querySelector(location.hash);
+          if ($activeTab) {
+              $activeTab.classList.remove('is-hidden');
+          }
+          const $tabMenu = document.querySelector(`a[href="${location.hash}"]`);
+          if ($tabMenu) {
+              $tabMenu.parentElement.classList.add('is-active');
+          }
+      }
+      switchTab();
+      window.addEventListener('hashchange', switchTab, false);
+  })();
+  </script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.2.0"></head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container navbar-container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.svg" alt="powercat" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">Home</a><a class="navbar-item" href="/archives">Archives</a><a class="navbar-item" href="/categories">Categories</a><a class="navbar-item" href="/tags">Tags</a><a class="navbar-item" href="/about">About</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a><a class="navbar-item search" title="Search" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><div class="card-content"><nav class="breadcrumb" aria-label="breadcrumbs"><ul><li><a href="/categories">Categories</a></li><li class="is-active"><a href="#" aria-current="page">Java</a></li></ul></nav></div></div><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item">Posted&nbsp;<time dateTime="2022-07-20T16:00:00.000Z" title="2022/7/21 00:00:00">2022-07-21</time></span><span class="level-item">Updated&nbsp;<time dateTime="2022-07-22T06:34:18.533Z" title="2022/7/22 14:34:18">2022-07-22</time></span><span class="level-item"><a class="link-muted" href="/categories/Java/">Java</a></span><span class="level-item">9 minutes read (About 1319 words)</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2022/07/21/java1/">java基础</a></h1><div class="content"><h1 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h1><p>对象：对象是一个类的实例，有状态和行为。例如，一条狗是一个对象，它的状态有：颜色、名字、品种；行为有：摇尾巴、叫、吃等。</p>
+<p>类：类是一个模板，它描述一类对象的行为和状态。</p>
+<p>方法：方法就是行为，一个类可以有很多种方法。逻辑运算、数据修改以及所有动作都是在方法中完成的。</p>
+<p>实例变量：每个对象都用独特的实例变量，对象的状态由这些实例变量的值决定。</p>
+<h1 id="Java程序"><a href="#Java程序" class="headerlink" title="Java程序"></a>Java程序</h1><p>当然还是从最简单的hello world分析开始</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">HelloWorld</span> &#123;</span><br><span class="line">    <span class="comment">/* 第一个Java程序</span></span><br><span class="line"><span class="comment">     * 它将输出字符串 Hello World</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Hello World&quot;</span>); <span class="comment">// 输出 Hello World</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220721233518-mqpnni7.png" alt="image.png"></p>
+<h1 id="java语法"><a href="#java语法" class="headerlink" title="java语法"></a>java语法</h1><p>1、大小写敏感：</p>
+<p>2、类名：对于所有的程序来说，类名的首字母应该大写。如果类名由若干单词组成，那么每个单词的首字母应该大写，例如：MyFirstJavaClass.</p>
+<p>3、方法名：所有的方法名都应该以小写字母开头。如果方法名含有若干单词，则后面的每个单词首字母大写。</p>
+<p>4、源文件名：源文件名必须和类名相同。当保存文件的时候，你应该使用类名作为文件名保存（切记 Java 是大小写敏感的），文件名的后缀为  <strong>.java</strong> 。（如果文件名和类名不相同则会导致编译错误）。</p>
+<p>5、主方法入口：所有的 Java 程序由 <strong>public static void main(String[] args)</strong> 方法开始执行。</p>
+<h1 id="Java-关键字"><a href="#Java-关键字" class="headerlink" title="Java 关键字"></a>Java 关键字</h1><table>
+<thead>
+<tr>
+<th>类别</th>
+<th>关键字</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>访问控制</td>
+<td>private</td>
+<td>私有的</td>
+</tr>
+<tr>
+<td>protected</td>
+<td>受保护的</td>
+<td></td>
+</tr>
+<tr>
+<td>public</td>
+<td>公共的</td>
+<td></td>
+</tr>
+<tr>
+<td>default</td>
+<td>默认</td>
+<td></td>
+</tr>
+<tr>
+<td>类、方法和变量修饰符</td>
+<td>abstract</td>
+<td>声明抽象</td>
+</tr>
+<tr>
+<td>class</td>
+<td>类</td>
+<td></td>
+</tr>
+<tr>
+<td>extends</td>
+<td>扩充,继承</td>
+<td></td>
+</tr>
+<tr>
+<td>final</td>
+<td>最终值,不可改变的</td>
+<td></td>
+</tr>
+<tr>
+<td>implements</td>
+<td>实现（接口）</td>
+<td></td>
+</tr>
+<tr>
+<td>interface</td>
+<td>接口</td>
+<td></td>
+</tr>
+<tr>
+<td>native</td>
+<td>本地，原生方法（非 Java 实现）</td>
+<td></td>
+</tr>
+<tr>
+<td>new</td>
+<td>新,创建</td>
+<td></td>
+</tr>
+<tr>
+<td>static</td>
+<td>静态</td>
+<td></td>
+</tr>
+<tr>
+<td>strictfp</td>
+<td>严格,精准</td>
+<td></td>
+</tr>
+<tr>
+<td>synchronized</td>
+<td>线程,同步</td>
+<td></td>
+</tr>
+<tr>
+<td>transient</td>
+<td>短暂</td>
+<td></td>
+</tr>
+<tr>
+<td>volatile</td>
+<td>易失</td>
+<td></td>
+</tr>
+<tr>
+<td>程序控制语句</td>
+<td>break</td>
+<td>跳出循环</td>
+</tr>
+<tr>
+<td>case</td>
+<td>定义一个值以供 switch 选择</td>
+<td></td>
+</tr>
+<tr>
+<td>continue</td>
+<td>继续</td>
+<td></td>
+</tr>
+<tr>
+<td>default</td>
+<td>默认</td>
+<td></td>
+</tr>
+<tr>
+<td>do</td>
+<td>运行</td>
+<td></td>
+</tr>
+<tr>
+<td>else</td>
+<td>否则</td>
+<td></td>
+</tr>
+<tr>
+<td>for</td>
+<td>循环</td>
+<td></td>
+</tr>
+<tr>
+<td>if</td>
+<td>如果</td>
+<td></td>
+</tr>
+<tr>
+<td>instanceof</td>
+<td>实例</td>
+<td></td>
+</tr>
+<tr>
+<td>return</td>
+<td>返回</td>
+<td></td>
+</tr>
+<tr>
+<td>switch</td>
+<td>根据值选择执行</td>
+<td></td>
+</tr>
+<tr>
+<td>while</td>
+<td>循环</td>
+<td></td>
+</tr>
+<tr>
+<td>错误处理</td>
+<td>assert</td>
+<td>断言表达式是否为真</td>
+</tr>
+<tr>
+<td>catch</td>
+<td>捕捉异常</td>
+<td></td>
+</tr>
+<tr>
+<td>finally</td>
+<td>有没有异常都执行</td>
+<td></td>
+</tr>
+<tr>
+<td>throw</td>
+<td>抛出一个异常对象</td>
+<td></td>
+</tr>
+<tr>
+<td>throws</td>
+<td>声明一个异常可能被抛出</td>
+<td></td>
+</tr>
+<tr>
+<td>try</td>
+<td>捕获异常</td>
+<td></td>
+</tr>
+<tr>
+<td>包相关</td>
+<td>import</td>
+<td>引入</td>
+</tr>
+<tr>
+<td>package</td>
+<td>包</td>
+<td></td>
+</tr>
+<tr>
+<td>基本类型</td>
+<td>boolean</td>
+<td>布尔型</td>
+</tr>
+<tr>
+<td>byte</td>
+<td>字节型</td>
+<td></td>
+</tr>
+<tr>
+<td>char</td>
+<td>字符型</td>
+<td></td>
+</tr>
+<tr>
+<td>double</td>
+<td>双精度浮点</td>
+<td></td>
+</tr>
+<tr>
+<td>float</td>
+<td>单精度浮点</td>
+<td></td>
+</tr>
+<tr>
+<td>int</td>
+<td>整型</td>
+<td></td>
+</tr>
+<tr>
+<td>long</td>
+<td>长整型</td>
+<td></td>
+</tr>
+<tr>
+<td>short</td>
+<td>短整型</td>
+<td></td>
+</tr>
+<tr>
+<td>变量引用</td>
+<td>super</td>
+<td>父类,超类</td>
+</tr>
+<tr>
+<td>this</td>
+<td>本类</td>
+<td></td>
+</tr>
+<tr>
+<td>void</td>
+<td>无返回值</td>
+<td></td>
+</tr>
+<tr>
+<td>保留关键字</td>
+<td>goto</td>
+<td>是关键字，但不能使用</td>
+</tr>
+<tr>
+<td>const</td>
+<td>是关键字，但不能使用</td>
+<td></td>
+</tr>
+</tbody></table>
+<h1 id="Java对象和类"><a href="#Java对象和类" class="headerlink" title="Java对象和类"></a>Java对象和类</h1><p>java中的对象就是像我们平时看到的修勾一样，大黄，萨摩耶，斗牛犬等，每一条修勾都是一个对象。如果说一只萨摩耶是一个对像的话，那么修勾就是一个类，这样的话就很好理解了，java类中的对象有不同的状态，比如说：大黄它在睡觉，有的大黄在吃饭。（piao菜鸟教程一个图</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220722104406-o03763h.png" alt="image.png">程序</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Dog</span> &#123;</span><br><span class="line">    String breed;</span><br><span class="line">    <span class="type">int</span> size;</span><br><span class="line">    String colour;</span><br><span class="line">    <span class="type">int</span> age;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">eat</span><span class="params">()</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">sleep</span><span class="params">()</span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">name</span><span class="params">()</span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>一个类可以包含以下类型变量：</p>
+<ul>
+<li><strong>局部变量</strong> ：在方法、构造方法或者语句块中定义的变量被称为局部变量。变量声明和初始化都是在方法中，方法结束后，变量就会自动销毁。</li>
+<li><strong>成员变量</strong> ：成员变量是定义在类中，方法体之外的变量。这种变量在创建对象的时候实例化。成员变量可以被类中方法、构造方法和特定类的语句块访问。</li>
+<li><strong>类变量</strong> ：类变量也声明在类中，方法体之外，但必须声明为 static 类型。</li>
+</ul>
+<p>一个类可以拥有多个方法，在上面的例子中：eat()、run()、sleep() 和 name() 都是 Dog 类的方法。</p>
+<h2 id="构造方法创建对象"><a href="#构造方法创建对象" class="headerlink" title="构造方法创建对象"></a>构造方法创建对象</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">PowerCat</span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="title function_">PowerCat</span><span class="params">(String name)</span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;猫的名字是：&quot;</span>+name);</span><br><span class="line">	&#125;<span class="comment">//构造一个方法</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span>&#123;</span><br><span class="line">		<span class="type">PowerCat</span> <span class="variable">bigPowerCat</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">PowerCat</span>(<span class="string">&quot;大能猫&quot;</span>);</span><br><span class="line">	&#125;<span class="comment">//创建一个类，注意命名规则</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220722112225-hbkc3tz.png" alt="image.png"></p>
+<h2 id="访问实例变量和方法"><a href="#访问实例变量和方法" class="headerlink" title="访问实例变量和方法"></a>访问实例变量和方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">PowerCat</span>&#123;</span><br><span class="line">	<span class="type">int</span> catAge;</span><br><span class="line">	<span class="keyword">public</span> <span class="title function_">PowerCat</span><span class="params">(String name)</span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;猫的名字是：&quot;</span>+name);</span><br><span class="line">	&#125;<span class="comment">//构造一个方法</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setAge</span><span class="params">(<span class="type">int</span> age)</span>&#123;</span><br><span class="line">		catAge = age;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="type">int</span> <span class="title function_">getAge</span><span class="params">()</span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;能猫的年龄为：&quot;</span>+catAge);</span><br><span class="line">		<span class="keyword">return</span> catAge;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span>&#123;</span><br><span class="line">		<span class="type">PowerCat</span> <span class="variable">bigPowerCat</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">PowerCat</span>(<span class="string">&quot;大能猫&quot;</span>);</span><br><span class="line">		bigPowerCat.setAge(<span class="number">18</span>);</span><br><span class="line">		bigPowerCat.getAge();</span><br><span class="line">		System.out.println(<span class="string">&quot;年龄：&quot;</span>+bigPowerCat.catAge);</span><br><span class="line">	&#125;<span class="comment">//创建一个类，注意命名规则</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220722112653-3l74e4i.png" alt="image.png"></p>
+</div></article></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1"><div class="card widget" data-type="profile"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar" src="/img/avatar.png" alt="大能猫"></figure><p class="title is-size-4 is-block" style="line-height:inherit;">大能猫</p><p class="is-size-6 is-block">Not only Pwn but also Java</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>QingDao</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">Posts</p><a href="/archives"><p class="title">22</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">Categories</p><a href="/categories"><p class="title">5</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">Tags</p><a href="/tags"><p class="title">4</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/ppoffice" target="_blank" rel="noopener">Follow</a></div><div class="level is-mobile is-multiline"><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/ppoffice"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Facebook" href="https://facebook.com"><i class="fab fa-facebook"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Twitter" href="https://twitter.com"><i class="fab fa-twitter"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Dribbble" href="https://dribbble.com"><i class="fab fa-dribbble"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="RSS" href="/"><i class="fas fa-rss"></i></a></div></div></div><!--!--><div class="card widget" data-type="links"><div class="card-content"><div class="menu"><h3 class="menu-label">Links</h3><ul class="menu-list"><li><a class="level is-mobile" href="blog.azly.top" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">jsjsj</span></span><span class="level-right"><span class="level-item tag">blog.azly.top</span></span></a></li><li><a class="level is-mobile" href="http://www.andynoel.xyz" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">AndyNoel</span></span><span class="level-right"><span class="level-item tag">www.andynoel.xyz</span></span></a></li><li><a class="level is-mobile" href="nameless.top" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Nameless</span></span><span class="level-right"><span class="level-item tag">nameless.top</span></span></a></li></ul></div></div></div><div class="card widget" data-type="categories"><div class="card-content"><div class="menu"><h3 class="menu-label">Categories</h3><ul class="menu-list"><li><a class="level is-mobile" href="/categories/Java/"><span class="level-start"><span class="level-item">Java</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/Re/"><span class="level-start"><span class="level-item">Re</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/pwn/"><span class="level-start"><span class="level-item">pwn</span></span><span class="level-end"><span class="level-item tag">13</span></span></a></li><li><a class="level is-mobile" href="/categories/pwn-Re/"><span class="level-start"><span class="level-item">pwn Re</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/web/"><span class="level-start"><span class="level-item">web</span></span><span class="level-end"><span class="level-item tag">6</span></span></a></li></ul></div></div></div><div class="card widget" data-type="recent-posts"><div class="card-content"><h3 class="menu-label">Recents</h3><article class="media"><div class="media-content"><p class="date"><time dateTime="2022-07-20T16:00:00.000Z">2022-07-21</time></p><p class="title"><a href="/2022/07/21/java1/">java基础</a></p><p class="categories"><a href="/categories/Java/">Java</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2022-07-06T16:00:00.000Z">2022-07-07</time></p><p class="title"><a href="/2022/07/07/%E5%A4%8D%E7%8E%B0/">复现几道有意思的Re</a></p><p class="categories"><a href="/categories/Re/">Re</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2022-06-20T16:00:00.000Z">2022-06-21</time></p><p class="title"><a href="/2022/06/21/%E5%9B%BD%E8%B5%9B/">2021ciscn华东北半决赛 wp</a></p><p class="categories"><a href="/categories/pwn/">pwn</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2022-05-31T16:00:00.000Z">2022-06-01</time></p><p class="title"><a href="/2022/06/01/guosai1/">2021ciscn wp</a></p><p class="categories"><a href="/categories/pwn-Re/">pwn Re</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2022-05-26T16:00:00.000Z">2022-05-27</time></p><p class="title"><a href="/2022/05/27/guosai/">Dest招新wp</a></p><p class="categories"><a href="/categories/pwn/">pwn</a></p></div></article></div></div><div class="card widget" data-type="archives"><div class="card-content"><div class="menu"><h3 class="menu-label">Archives</h3><ul class="menu-list"><li><a class="level is-mobile" href="/archives/2022/07/"><span class="level-start"><span class="level-item">July 2022</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/archives/2022/06/"><span class="level-start"><span class="level-item">June 2022</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/archives/2022/05/"><span class="level-start"><span class="level-item">May 2022</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2022/04/"><span class="level-start"><span class="level-item">April 2022</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li><li><a class="level is-mobile" href="/archives/2022/03/"><span class="level-start"><span class="level-item">March 2022</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li><li><a class="level is-mobile" href="/archives/2022/02/"><span class="level-start"><span class="level-item">February 2022</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2022/01/"><span class="level-start"><span class="level-item">January 2022</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile" href="/archives/2021/11/"><span class="level-start"><span class="level-item">November 2021</span></span><span class="level-end"><span class="level-item tag">5</span></span></a></li><li><a class="level is-mobile" href="/archives/2021/10/"><span class="level-start"><span class="level-item">October 2021</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li></ul></div></div></div><div class="card widget" data-type="tags"><div class="card-content"><div class="menu"><h3 class="menu-label">Tags</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/note/"><span class="tag">note</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/study/"><span class="tag">study</span><span class="tag">12</span></a></div><div class="control"><a class="tags has-addons" href="/tags/web/"><span class="tag">web</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/writeup/"><span class="tag">writeup</span><span class="tag">8</span></a></div></div></div></div></div><div class="card widget" data-type="subscribe-email"><div class="card-content"><div class="menu"><h3 class="menu-label">Subscribe for updates</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button" type="submit" value="Subscribe"></div></div></form></div></div></div><div class="card widget"><div class="card-content"><div class="notification is-danger">You need to set <code>client_id</code> and <code>slot_id</code> to show this AD unit. Please set it in <code>_config.yml</code>.</div></div></div><div class="card widget" data-type="subscribe-email"><div class="card-content"><div class="menu"><h3 class="menu-label">follow.it</h3><form action="" method="post" target="_blank"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button" type="submit" value="Subscribe"></div></div></form></div></div></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.svg" alt="powercat" height="28"></a><p class="is-size-7"><span>&copy; 2022 John Doe</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script><script src="https://cdnjs.loli.net/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js"></script><script src="https://cdnjs.loli.net/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" defer></script><script>moment.locale("en");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="Back to top" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/cookieconsent/3.1.1/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "This website uses cookies to improve your experience.",
+          dismiss: "Got it!",
+          allow: "Allow cookies",
+          deny: "Decline",
+          link: "Learn more",
+          policy: "Cookie Policy",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdnjs.loli.net/ajax/libs/lightgallery/1.10.0/js/lightgallery.min.js" defer></script><script src="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="Type something..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"Type something...","untitled":"(Untitled)","posts":"Posts","pages":"Pages","categories":"Categories","tags":"Tags"});
+        });</script></body></html>
