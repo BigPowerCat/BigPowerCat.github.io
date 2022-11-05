@@ -1,0 +1,148 @@
+<!doctype html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="&lt;p&gt;首先归纳下常见的文件包含函数：&lt;/p&gt;
+&lt;p&gt;include、require、include_once、require_once、highlight_file 、show_source 、readfile 、file_get_contents 、fopen 、file，计划对文件包含漏洞与php封装协议的利用方法进行总结，&lt;/p&gt;
+&lt;p&gt;本篇先总结下一些封装协议，涉及的相关协议：file:&amp;">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=yes">
+  <title>PHP伪协议 | powercat</title>
+
+  <link rel="stylesheet" id="chosen-theme" href="https://rawgit.com/fiatjaf/classless/master/themes/plain/theme.css">
+  <script>
+let link = document.getElementById('chosen-theme')
+let widget = document.createElement('div')
+widget.style.position = 'absolute'
+widget.style.right = '5px'
+widget.style.top = '2px'
+widget.style.background = 'beige'
+widget.style.color = '#444'
+widget.style.zIndex = 99
+widget.style.padding = '4px 8px'
+widget.innerHTML = `
+<label>
+  <p>No theme was set on <code>theme_config</code>.<br>
+     Choose a theme from the list to experiment with it:</p>
+  <select></select>
+</label>
+`
+fetch('https://api.github.com/repos/fiatjaf/classless/contents/themes')
+  .then(r => r.json())
+  .then(files => {
+    document.body.appendChild(widget)
+    let select = document.querySelector('select')
+    files
+      .filter(f => f.type === 'dir')
+      .forEach(f => {
+        let option = document.createElement('option')
+        option.value = f.name
+        option.innerHTML = f.name
+        select.appendChild(option)
+      })
+    let options = Array.from(select.querySelectorAll('option'))
+    let chosen = options[parseInt(Math.random() * options.length)]
+    chosen.selected = true
+    link.href = link.href.replace(/themes\/[^\/]+/, `themes/${chosen.value}`)
+    select.addEventListener('change', e => {
+      let chosen = e.target.value
+      link.href = link.href.replace(/themes\/[^\/]+/, `themes/${chosen}`)
+    })
+  })
+  .catch(console.log)
+  </script>
+
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body>
+  <header role="banner">
+      <a href="/">
+        
+          <img src="https://picsum.photos/640/480">
+        
+      </a>  
+    <h1>
+      <a href="/">powercat</a>
+    </h1>
+    <aside>
+      <p></p>
+    </aside>
+  </header>
+  
+  <main>
+    <article>
+  <header>
+  
+  <h1><a href="http://example.com/2021/11/05/PHP%E4%BC%AA%E5%8D%8F%E8%AE%AE%E6%95%B4%E7%90%86/">PHP伪协议</a></h1>
+  <aside>
+    
+    <time datetime="212021-11-05">
+      November 5th 2021
+    </time>
+    
+    <ul>
+    
+      <li><a href="/tags/study/">study</a></li>
+    
+    </ul>
+  </aside>
+</header>
+
+  <div><p>首先归纳下常见的文件包含函数：</p>
+<p>include、require、include_once、require_once、highlight_file 、show_source 、readfile 、file_get_contents 、fopen 、file，计划对文件包含漏洞与php封装协议的利用方法进行总结，</p>
+<p>本篇先总结下一些封装协议，涉及的相关协议：file:&#x2F;&#x2F;、</p>
+<p>php:&#x2F;&#x2F;filter、php:&#x2F;&#x2F;input、zip:&#x2F;&#x2F;、compress.bzip2:&#x2F;&#x2F;、compress.zlib:&#x2F;&#x2F;、data:&#x2F;&#x2F;，后续再对每个文件包含函数进一步进行探讨。</p>
+<p>环境概要： PHP.ini：</p>
+<p>allow_url_fopen ：on 默认开启 该选项为on便是激活了 URL 形式的 fopen 封装协议使得可以访问 URL 对象文件等。</p>
+<p>allow_url_include：off 默认关闭，该选项为on便是允许 包含URL 对象文件等。</p>
+<p>php伪协议：</p>
+<p>File:&#x2F;&#x2F; 访问本地文件系统</p>
+<p>http:&#x2F;&#x2F; 访问 HTTPs 网址</p>
+<p>ftp:&#x2F;&#x2F; 访问 ftp URL</p>
+<p>Php:&#x2F;&#x2F; 访问输入输出流</p>
+<p>Zlib:&#x2F;&#x2F; 压缩流</p>
+<p>Data:&#x2F;&#x2F; 数据</p>
+<p>Ssh2:&#x2F;&#x2F; security shell2</p>
+<p>Expect:&#x2F;&#x2F; 处理交互式的流</p>
+<p>Glob:&#x2F;&#x2F; 查找匹配的文件路径</p>
+<h2 id="php-x2F-x2F-协议"><a href="#php-x2F-x2F-协议" class="headerlink" title="php:&#x2F;&#x2F;协议"></a>php:&#x2F;&#x2F;协议</h2><p>条件：</p>
+<p>不需要开启allow_url_fopen，仅php:&#x2F;&#x2F;input、 php:&#x2F;&#x2F;stdin、 php:&#x2F;&#x2F;memory 和 php:&#x2F;&#x2F;temp 需要开启allow_url_include。</p>
+<p>php:&#x2F;&#x2F; 访问各个输入&#x2F;输出流（I&#x2F;O streams），在CTF中经常使用的是php:&#x2F;&#x2F;filter和php:&#x2F;&#x2F;input，php:&#x2F;&#x2F;filter用于读取源码，php:&#x2F;&#x2F;input用于执行php代码。</p>
+<p>参考自：<a target="_blank" rel="noopener" href="http://php.net/manual/zh/wrappers.php.php#refsect2-wrappers.php-unknown-unknown-unknown-descriptioq">http://php.net/manual/zh/wrappers.php.php#refsect2-wrappers.php-unknown-unknown-unknown-descriptioq</a></p>
+<h2 id="php-x2F-x2F-filter"><a href="#php-x2F-x2F-filter" class="headerlink" title="php:&#x2F;&#x2F;filter"></a>php:&#x2F;&#x2F;filter</h2><p>读取源代码并进行base64编码输出，不然会直接当做php代码执行就看不到源代码内容了。</p>
+<p>PHP.ini：</p>
+<p>php:&#x2F;&#x2F;filter在双off的情况下也可以正常使用；</p>
+<p>allow_url_fopen ：off&#x2F;on</p>
+<p>allow_url_include：off&#x2F;on</p>
+<h2 id="Php-x2F-x2F-input访问输入输出流"><a href="#Php-x2F-x2F-input访问输入输出流" class="headerlink" title="Php:&#x2F;&#x2F; input访问输入输出流"></a>Php:&#x2F;&#x2F; input访问输入输出流</h2><p>php:&#x2F;&#x2F;input时抓取到的包会是POST.</p>
+<p>可以访问请求的原始数据的只读流, 将post请求中的数据作为PHP代码执行。</p>
+<p>PHP.ini：</p>
+<p>allow_url_fopen ：off&#x2F;on</p>
+<p>allow_url_include：on</p>
+<p>将输入的数据作为数据和文件名进行包括在这里插入图片描述也可以写入shell，这个地方需要对$”进行加\操作，否则会被过滤。</p>
+<?php $file = fopen("shell.php","w"); echo fputs($file," <?php @eval(\$_POST[\"cmd\"];?><p>“)?&gt;</p>
+<h2 id="File-x2F-x2F-访问本地文件系统"><a href="#File-x2F-x2F-访问本地文件系统" class="headerlink" title="File:&#x2F;&#x2F; 访问本地文件系统"></a>File:&#x2F;&#x2F; 访问本地文件系统</h2><p>PHP.ini：</p>
+<p>file:&#x2F;&#x2F; 协议在双off的情况下也可以正常使用；</p>
+<p>allow_url_fopen ：off&#x2F;on</p>
+<p>allow_url_include：off&#x2F;on</p>
+<p>file:&#x2F;&#x2F; 用于访问本地文件系统，如c:盘中的东西。在CTF中通常用来读取本地文件的且不受allow_url_fopen与allow_url_include的影响。</p>
+<p>file:&#x2F;&#x2F; [文件的绝对路径和文件名]</p>
+<p>在这里插入图片描述</p>
+<p>linux 系统环境下：</p>
+<p>(1) <a target="_blank" rel="noopener" href="http://127.0.0.1/FI/LFI.php?file=file:///etc/passwd">http://127.0.0.1/FI/LFI.php?file=file:///etc/passwd</a></p>
+<p>winows 系统环境下：</p>
+<p><a target="_blank" rel="noopener" href="http://127.0.0.1/code/1.php?file=file:///E:%5CphpStudy%5CWWW%5Ccode%5Cphpinfo.php">http://127.0.0.1/code/1.php?file=file:///E:\phpStudy\WWW\code\phpinfo.php</a></p>
+<h2 id="伪协议总结"><a href="#伪协议总结" class="headerlink" title="伪协议总结"></a>伪协议总结</h2><p>File协议用于读取系统文件，c盘关键内容。Php:&#x2F;&#x2F;filter 用来读取文件内容，但是要base64后出来，否则会造成文件执行从而只看到执行结果。Php:&#x2F;&#x2F;input（代码执行）可将post请求中的数据作为PHP代码执行。可以用于写木马。Zip可以用于躲避白名单，只需要只要物理路径和目录执行权限就可执行。Phar和zip作用相似，但是在使用方式上有差别，zip是使用绝对路径。Data和input相似，可以代码执行，但只有在php&lt;5.3且include&#x3D;on时可以写木马。</p>
+</div>
+</article>
+
+  </main>
+  <aside>
+    <p>This is an `aside`, a useful place to put information of any kind: metadata about the site author (with or without pictures), brief information about the purposes of the site, a static collection of external links or anything else.</p>
+<p>For some Classless themes pictures and data about the author may suit better in the `cover` and `description` site attributes (see `config.toml`), but most of the times that kind of information will fit here better.</p>
+
+  </aside>
+  <footer role="contentinfo">
+    <p>A default site footer. If you don't know what to place here maybe you should just write your name plus the current year?</p>
+<p>If you want to have a sitemap, a contact form or other complex stuff, most Classless themes will also handle it nicely. Or you can take a look at the <code>aside.html</code> partial.</p>
+
+  </footer>
+</body>

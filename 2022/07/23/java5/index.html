@@ -1,0 +1,108 @@
+<!doctype html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="&lt;p&gt;Java 增强 for 循环语法格式如下:&lt;/p&gt;
+&lt;figure class=&#34;highlight java&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=yes">
+  <title>Java增强for循环 | powercat</title>
+
+  <link rel="stylesheet" id="chosen-theme" href="https://rawgit.com/fiatjaf/classless/master/themes/plain/theme.css">
+  <script>
+let link = document.getElementById('chosen-theme')
+let widget = document.createElement('div')
+widget.style.position = 'absolute'
+widget.style.right = '5px'
+widget.style.top = '2px'
+widget.style.background = 'beige'
+widget.style.color = '#444'
+widget.style.zIndex = 99
+widget.style.padding = '4px 8px'
+widget.innerHTML = `
+<label>
+  <p>No theme was set on <code>theme_config</code>.<br>
+     Choose a theme from the list to experiment with it:</p>
+  <select></select>
+</label>
+`
+fetch('https://api.github.com/repos/fiatjaf/classless/contents/themes')
+  .then(r => r.json())
+  .then(files => {
+    document.body.appendChild(widget)
+    let select = document.querySelector('select')
+    files
+      .filter(f => f.type === 'dir')
+      .forEach(f => {
+        let option = document.createElement('option')
+        option.value = f.name
+        option.innerHTML = f.name
+        select.appendChild(option)
+      })
+    let options = Array.from(select.querySelectorAll('option'))
+    let chosen = options[parseInt(Math.random() * options.length)]
+    chosen.selected = true
+    link.href = link.href.replace(/themes\/[^\/]+/, `themes/${chosen.value}`)
+    select.addEventListener('change', e => {
+      let chosen = e.target.value
+      link.href = link.href.replace(/themes\/[^\/]+/, `themes/${chosen}`)
+    })
+  })
+  .catch(console.log)
+  </script>
+
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body>
+  <header role="banner">
+      <a href="/">
+        
+          <img src="https://picsum.photos/640/480">
+        
+      </a>  
+    <h1>
+      <a href="/">powercat</a>
+    </h1>
+    <aside>
+      <p></p>
+    </aside>
+  </header>
+  
+  <main>
+    <article>
+  <header>
+  
+  <h1><a href="http://example.com/2022/07/23/java5/">Java增强for循环</a></h1>
+  <aside>
+    
+    <time datetime="222022-07-23">
+      July 23rd 2022
+    </time>
+    
+    <ul>
+    
+      <li><a href="/tags/note/">note</a></li>
+    
+    </ul>
+  </aside>
+</header>
+
+  <div><p>Java 增强 for 循环语法格式如下:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(声明语句 : 表达式)</span><br><span class="line">&#123;</span><br><span class="line">   <span class="comment">//代码句子</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> <strong>声明语句：</strong> 声明新的局部变量，该变量的类型必须和数组元素的类型匹配。其作用域限定在循环语句块，其值与此时数组元素的值相等。</p>
+<p> <strong>表达式：</strong> 表达式是要访问的数组名，或者是返回值为数组的方法。</p>
+<p>例子</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span>&#123;</span><br><span class="line">      <span class="type">int</span> [] numbers = &#123;<span class="number">10</span>, <span class="number">20</span>, <span class="number">30</span>, <span class="number">40</span>, <span class="number">50</span>&#125;;</span><br><span class="line"> </span><br><span class="line">      <span class="keyword">for</span>(<span class="type">int</span> x : numbers )&#123;</span><br><span class="line">         System.out.print( x );</span><br><span class="line">         System.out.print(<span class="string">&quot;,&quot;</span>);</span><br><span class="line">      &#125;</span><br><span class="line">      System.out.print(<span class="string">&quot;\n&quot;</span>);</span><br><span class="line">      String [] names =&#123;<span class="string">&quot;James&quot;</span>, <span class="string">&quot;Larry&quot;</span>, <span class="string">&quot;Tom&quot;</span>, <span class="string">&quot;Lacy&quot;</span>&#125;;</span><br><span class="line">      <span class="keyword">for</span>( String name : names ) &#123;</span><br><span class="line">         System.out.print( name );</span><br><span class="line">         System.out.print(<span class="string">&quot;,&quot;</span>);</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+</article>
+
+  </main>
+  <aside>
+    <p>This is an `aside`, a useful place to put information of any kind: metadata about the site author (with or without pictures), brief information about the purposes of the site, a static collection of external links or anything else.</p>
+<p>For some Classless themes pictures and data about the author may suit better in the `cover` and `description` site attributes (see `config.toml`), but most of the times that kind of information will fit here better.</p>
+
+  </aside>
+  <footer role="contentinfo">
+    <p>A default site footer. If you don't know what to place here maybe you should just write your name plus the current year?</p>
+<p>If you want to have a sitemap, a contact form or other complex stuff, most Classless themes will also handle it nicely. Or you can take a look at the <code>aside.html</code> partial.</p>
+
+  </footer>
+</body>

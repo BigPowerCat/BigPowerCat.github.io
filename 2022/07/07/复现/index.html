@@ -1,0 +1,310 @@
+<!doctype html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="&lt;h2 id=&#34;2022-CTF-Re-NaCl-复现&#34;&gt;&lt;a href=&#34;#2022-CTF-Re-NaCl-复现&#34; class=&#34;headerlink&#34; title=&#34;2022*CTF-Re-NaCl[复现]&#34;&gt;&lt;/a&gt;&lt;strong&gt;2022*CTF-Re-NaCl[复现]&lt;/strong&gt;&lt;/h2&gt;&lt;h3 id=&#34;前言&#34;&gt;&lt;a href=&#34;#前言&#34; class=&#34;headerlink&#34; t">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=yes">
+  <title>复现几道有意思的Re | powercat</title>
+
+  <link rel="stylesheet" id="chosen-theme" href="https://rawgit.com/fiatjaf/classless/master/themes/plain/theme.css">
+  <script>
+let link = document.getElementById('chosen-theme')
+let widget = document.createElement('div')
+widget.style.position = 'absolute'
+widget.style.right = '5px'
+widget.style.top = '2px'
+widget.style.background = 'beige'
+widget.style.color = '#444'
+widget.style.zIndex = 99
+widget.style.padding = '4px 8px'
+widget.innerHTML = `
+<label>
+  <p>No theme was set on <code>theme_config</code>.<br>
+     Choose a theme from the list to experiment with it:</p>
+  <select></select>
+</label>
+`
+fetch('https://api.github.com/repos/fiatjaf/classless/contents/themes')
+  .then(r => r.json())
+  .then(files => {
+    document.body.appendChild(widget)
+    let select = document.querySelector('select')
+    files
+      .filter(f => f.type === 'dir')
+      .forEach(f => {
+        let option = document.createElement('option')
+        option.value = f.name
+        option.innerHTML = f.name
+        select.appendChild(option)
+      })
+    let options = Array.from(select.querySelectorAll('option'))
+    let chosen = options[parseInt(Math.random() * options.length)]
+    chosen.selected = true
+    link.href = link.href.replace(/themes\/[^\/]+/, `themes/${chosen.value}`)
+    select.addEventListener('change', e => {
+      let chosen = e.target.value
+      link.href = link.href.replace(/themes\/[^\/]+/, `themes/${chosen}`)
+    })
+  })
+  .catch(console.log)
+  </script>
+
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body>
+  <header role="banner">
+      <a href="/">
+        
+          <img src="https://picsum.photos/640/480">
+        
+      </a>  
+    <h1>
+      <a href="/">powercat</a>
+    </h1>
+    <aside>
+      <p></p>
+    </aside>
+  </header>
+  
+  <main>
+    <article>
+  <header>
+  
+  <h1><a href="http://example.com/2022/07/07/%E5%A4%8D%E7%8E%B0/">复现几道有意思的Re</a></h1>
+  <aside>
+    
+    <time datetime="222022-07-07">
+      July 7th 2022
+    </time>
+    
+    <ul>
+    
+      <li><a href="/tags/writeup/">writeup</a></li>
+    
+    </ul>
+  </aside>
+</header>
+
+  <div><h2 id="2022-CTF-Re-NaCl-复现"><a href="#2022-CTF-Re-NaCl-复现" class="headerlink" title="2022*CTF-Re-NaCl[复现]"></a><strong>2022*CTF-Re-NaCl[复现]</strong></h2><h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>想复现</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426095410-mcjhvqt.png" alt="image.png"></p>
+<h3 id="分析去花"><a href="#分析去花" class="headerlink" title="分析去花"></a>分析去花</h3><p>无壳 64位ELF文件</p>
+<p>一开始的时候，什么也看不到，也没有提示main函数在哪里</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220425161858-psqb15j.png" alt="image.png"></p>
+<p>那我们就shift+f12进行字符串查找，然后找到像是main函数的字符串</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220425162043-okdmkzu.png" alt="image.png"></p>
+<p>跟进</p>
+<p> 这就到了main函数</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220425162104-a3s77wy.png" alt="image.png"></p>
+<p>此文件是一个静态的文件</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220425162437-6y4x4j6.png" alt="image.png"></p>
+<p>那么这几个函数就是我们的功能函数，看格式的话，就是第一个为puts函数或者printf函数，第二个应该是需要读入的函数，看参数格式就是read函数，那么我们就可以按照相应的格式进行重命名函数</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220425162833-f4o7b7m.png" alt="image.png"></p>
+<p>可是用一个函数不知道是干什么的，它是对我们输入进行了一个处理，那么他应该就是一个加密的函数</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220425163119-8hd9n07.png" alt="image.png"></p>
+<p>跟进encode函数之后发现是这个样子的呜呜呜，都看不懂的样子</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220425163434-x6h7mp9.png" alt="image.png"></p>
+<p>其实是作者加上了花呜呜，这样的话我们就需要去花是我们能够看懂这个程序</p>
+<h3 id="去花"><a href="#去花" class="headerlink" title="去花"></a>去花</h3><p>主要的这个找到不太对劲的一个汇编，那么我们就先动调一步一步的去找一下</p>
+<p>经过调试我们可以发现第一个不妥的地方</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220425173105-yiy1xad.png" alt="image.png"></p>
+<p>先输入一串东西</p>
+<p>在我们enconde开始的地方下断点</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220425173124-g6yqonr.png" alt="image.png"></p>
+<p>首先这里是没什么花的，我们在往下去看</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220425173302-qpuh4q4.png" alt="image.png"></p>
+<p>从这里开始，从这个nop后面非常奇怪，一大片一大片的</p>
+<p>后面的这个跳转，总是跳转回来跳转回去</p>
+<p>首先就是将r15-8的地址放入r15中，然后将一个8080980的地址放入r12中，然后通过r12放入到r15中去，多调几遍就会发现程序把r15当作了一个stack使用。</p>
+<p>我们调试一下来看r15的东西，</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220425173912-f01jc2l.png" alt="image.png"></p>
+<p>我们发现r15里面存放的是我们输入的12345678，往下执行</p>
+<p>执行nop后面的第一个lea</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220425174034-e257rux.png" alt="image.png"></p>
+<p>r15往上抬了8个</p>
+<p>再执行一个lea和mov</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220425174311-b7nvwzi.png" alt="image.png"></p>
+<p>这个时候r15中是8080980就是其下面的地址</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220425174351-fpm7iwj.png" alt="image.png"></p>
+<p>然后我们开始jmp到后面继续跟，然后我们发现又有jmp的这个东西</p>
+<p>又来了一遍</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220425174850-9eq7wfd.png" alt="image.png"></p>
+<p>这样循环往复的样子</p>
+<p>这里就是我们第一个需要去修改的地方。</p>
+<p>然后我们再往下去执行</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220425175154-l66s05u.png" alt="image.png"></p>
+<p>我们又找到了一个类似的操作，不过最后是用来跳转到某个地方</p>
+<p>执行之后就是这个东西</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220425175343-1go2h87.png" alt="image.png"></p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220425175351-kgsos3b.png" alt="image.png"></p>
+<p>执行的就是我们之前存储再r15中的内容。</p>
+<p>然后再跳转过去，假如说我们把r15看作一个模拟的栈，这样先进后出的调用就相当于一个return的作用。</p>
+<p>那么我们就则可以直接用现成的栈来实现这个功能，因为程序的逻辑是固定的，那么不会因为程序来扰乱了我们栈空间，所以我们用call和teurn来代替</p>
+<p>我们需要写脚本修一下，脚本如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">start = <span class="number">0x807FEC0</span></span><br><span class="line">end = <span class="number">0x8080AD1</span></span><br><span class="line"></span><br><span class="line">address = [<span class="number">0</span> <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>)]</span><br><span class="line">callTarget = [<span class="string">&quot;lea&quot;</span>, <span class="string">&quot;lea&quot;</span>, <span class="string">&quot;mov&quot;</span>, <span class="string">&quot;jmp&quot;</span>]</span><br><span class="line">retnTarget = [<span class="string">&quot;lea&quot;</span>, <span class="string">&quot;mov&quot;</span>, <span class="string">&quot;and&quot;</span>, <span class="string">&quot;lea&quot;</span>, <span class="string">&quot;jmp&quot;</span>]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">nop</span>(<span class="params">s, e</span>):</span><br><span class="line">	<span class="keyword">while</span> (s &lt; e):</span><br><span class="line">		patch_byte(s, <span class="number">0x90</span>)</span><br><span class="line">		s += <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">turnCall</span>(<span class="params">s, e</span>):</span><br><span class="line">	<span class="comment"># nop掉call之前的值</span></span><br><span class="line">	nop(s, e)</span><br><span class="line">	patch_byte(e, <span class="number">0xE8</span>)</span><br><span class="line">	<span class="comment"># 把后面的花指令去掉</span></span><br><span class="line">	huaStart = next_head(e)</span><br><span class="line">	huaEnd = next_head(huaStart)</span><br><span class="line">	nop(huaStart, huaEnd)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">turnRetn</span>(<span class="params">s, e</span>):</span><br><span class="line">	nop(s, e)</span><br><span class="line">	<span class="comment"># 注意原来是jmp xxx</span></span><br><span class="line">	<span class="comment"># 所以前面nop掉一个 后面改成retn</span></span><br><span class="line">	patch_byte(e, <span class="number">0x90</span>)</span><br><span class="line">	patch_byte(e + <span class="number">1</span>, <span class="number">0xC3</span>)</span><br><span class="line"></span><br><span class="line">p = start</span><br><span class="line"><span class="keyword">while</span> p &lt; end:</span><br><span class="line">	address[<span class="number">0</span>] = p</span><br><span class="line">	address[<span class="number">1</span>] = next_head(p)</span><br><span class="line">	address[<span class="number">2</span>] = next_head(address[<span class="number">1</span>])</span><br><span class="line">	address[<span class="number">3</span>] = next_head(address[<span class="number">2</span>])</span><br><span class="line">	address[<span class="number">4</span>] = next_head(address[<span class="number">3</span>])</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="number">4</span>):</span><br><span class="line">		<span class="keyword">if</span> print_insn_mnem(address[i]) != callTarget[i]:</span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		turnCall(address[<span class="number">0</span>], address[<span class="number">3</span>])</span><br><span class="line">		p = next_head(next_head(address[<span class="number">3</span>]))</span><br><span class="line">		<span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="number">5</span>):</span><br><span class="line">		<span class="keyword">if</span> print_insn_mnem(address[i]) != retnTarget[i]:</span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		turnRetn(address[<span class="number">0</span>], address[<span class="number">4</span>])</span><br><span class="line">		p = next_head(next_head(address[<span class="number">4</span>]))</span><br><span class="line">		<span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line">	p = next_head(p)</span><br></pre></td></tr></table></figure>
+
+<p>（自己不会写跟别人要的。。。。</p>
+<p>修复了之后就是这样的</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426094400-zj6ug68.png" alt="image.png"></p>
+<p>这样的话我们再次反编译就是这样</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426094700-pzcwh21.png" alt="image.png"></p>
+<p>这比之前是要好看得多哇</p>
+<h3 id="修复结构体"><a href="#修复结构体" class="headerlink" title="修复结构体"></a>修复结构体</h3><p>之后的内容就是修复结构体了，我们看到上面的图有许多关于v3偏移的数据，我们猜测v3应该是一个结构体，我们选中右键创建结构体，首先就用ida给的默认的结构体，之后我们还要进行相应的修改</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426095210-h3jcxmy.png" alt="image.png"></p>
+<p>这样看的话就好多了。</p>
+<p>我们对此函数的逻辑进行分析，对相应的结构体进行一个重命名。</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426101531-h466e0q.png" alt="image.png"></p>
+<p>我们看到，我们需要经过4次循环，每一次处理的字节都为8，所以说我们输入的长度应该为4*8也就是32位。</p>
+<h4 id="encode1"><a href="#encode1" class="headerlink" title="encode1"></a>encode1</h4><br />
+
+<p>我们首先跟进encode1</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426105614-e33xqw9.png" alt="image.png"></p>
+<p>里面创建了结构体，在动调中我们进行一个调整</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426105705-r5c1dnm.png" alt="image.png"></p>
+<p>这边是一个逻辑左移，然后在动调的时候我们把异或的数组可以导出</p>
+<p>总之，通过分析，这里面是一个完全可逆的一个加密。需要注意的是在encode1里面有一个最后的高位和低位的互换</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426110232-p2opiar.png" alt="image.png"></p>
+<p>不要忘记操作</p>
+<h4 id="encode2"><a href="#encode2" class="headerlink" title="encode2"></a>encode2</h4><p>大体看起来是不是有一些眼熟，这就是我们的xtea算法，是经过魔改的一个xtea算法，只是将德尔塔的值改变了</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426110309-i6bg76n.png" alt="image.png"></p>
+<p>这样不是很直观我们就创造一个结构体去整一下</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426110834-pcxzgqi.png" alt="image.png"></p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426110841-oujdgyx.png" alt="image.png"></p>
+<p>就是这个样子了</p>
+<p>上边的key我们在动调中可以直接去提取</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426111032-m0n0173.png" alt="image.png"></p>
+<p>需要注意的是，a1是我们出进来的轮数，通常来说，xtea的轮数是固定的，这里是我们传入的。这是我们的两个魔改的点。</p>
+<h4 id="encode3"><a href="#encode3" class="headerlink" title="encode3"></a>encode3</h4><p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426111303-ij4spka.png" alt="image.png"></p>
+<p>里面有一个qmemcpy</p>
+<p>主要的作用就是将a2放入a1，这样的话我们就可以整一下了。</p>
+<h3 id="总体分析"><a href="#总体分析" class="headerlink" title="总体分析"></a>总体分析</h3><p>通过前面的分析我们就可以分析一下整体的这个逻辑了</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426111654-4heoo1y.png" alt="image.png"></p>
+<p>首先将我们的32位的输入，分为4组进行一个操作</p>
+<p>第一个操作就是进行异或，然后xtea魔改加密，往后就是一个赋值check了哈哈。</p>
+<h3 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line">cmp = [0x66, 0xC2, 0xF5, 0xFD, 0x86, 0x82, 0x32, 0x7A, 0x04, 0x40, 0x94, 0xCE, 0xDC, 0x8A, 0xE0, 0x5D, 0x0A, 0xBD, 0xE4, 0xA6, 0xDC, 0xAD, 0xCA, 0x16, 0x0C, 0x6F, 0xCD, 0x13, 0x36, 0xD9, 0x75, 0x1A]</span><br><span class="line">dword_80AFB60 = [0x4050607, 0x10203, 0x0C0D0E0F, 0x8090A0B, 0x0CD3FE81B, 0x0D7C45477, 0x9F3E9236, 0x107F187, 0x0F993CB81, 0x0BF74166C, 0x0DA198427, 0x1A05ABFF, 0x9307E5E4, 0x0CB8B0E45, 0x306DF7F5, 0x0AD300197, 0x0AA86B056, 0x449263BA, 0x3FA4401B, 0x1E41F917, 0x0C6CB1E7D, 0x18EB0D7A, 0x0D4EC4800, 0x0B486F92B, 0x8737F9F3, 0x765E3D25, 0x0DB3D3537, 0x0EE44552B, 0x11D0C94C, 0x9B605BCB, 0x903B98B3, 0x24C2EEA3, 0x896E10A2, 0x2247F0C0, 0x0B84E5CAA, 0x8D2C04F0, 0x3BC7842C, 0x1A50D606, 0x49A1917C, 0x7E1CB50C, 0x0FC27B826, 0x5FDDDFBC, 0x0DE0FC404, 0x0B2B30907]</span><br><span class="line">xtea_key = [0x3020100,0x7060504,0x0b0a0908,0x0f0e0d0c]</span><br><span class="line">rol = lambda val, r_bits, max_bits: \</span><br><span class="line">    (val &lt;&lt; r_bits%max_bits) &amp; (2**max_bits-1) | \</span><br><span class="line">    ((val &amp; (2**max_bits-1)) &gt;&gt; (max_bits-(r_bits%max_bits)))</span><br><span class="line">ror = lambda val, r_bits, max_bits: \</span><br><span class="line">    ((val &amp; (2**max_bits-1)) &gt;&gt; r_bits%max_bits) | \</span><br><span class="line">    (val &lt;&lt; (max_bits-(r_bits%max_bits)) &amp; (2**max_bits-1))</span><br><span class="line">def xtea_encrypt(rounds, v, k):</span><br><span class="line">    v0 = v[0]</span><br><span class="line">    v1 = v[1]</span><br><span class="line">    x = 0</span><br><span class="line">    delta = 0x10325476</span><br><span class="line">    for i in range(rounds):</span><br><span class="line">        v0 += (((v1 &lt;&lt; 4) ^ (v1 &gt;&gt; 5)) + v1) ^ (x + k[x &amp; 3])</span><br><span class="line">        v0 = v0 &amp; 0xFFFFFFFF</span><br><span class="line">        x += delta</span><br><span class="line">        x = x &amp; 0xFFFFFFFF</span><br><span class="line">        v1 += (((v0 &lt;&lt; 4) ^ (v0 &gt;&gt; 5)) + v0) ^ (x + k[(x &gt;&gt; 11) &amp; 3])</span><br><span class="line">        v1 = v1 &amp; 0xFFFFFFFF</span><br><span class="line">    v[0] = v0</span><br><span class="line">    v[1] = v1</span><br><span class="line">    return v</span><br><span class="line">def xtea_decrypt(rounds, v, k):</span><br><span class="line">    v0 = v[0]</span><br><span class="line">    v1 = v[1]</span><br><span class="line">    delta = 0x10325476</span><br><span class="line">    x = delta * rounds</span><br><span class="line">    for i in range(rounds):</span><br><span class="line">        v1 -= (((v0 &lt;&lt; 4) ^ (v0 &gt;&gt; 5)) + v0) ^ (x + k[(x &gt;&gt; 11) &amp; 3])</span><br><span class="line">        v1 = v1 &amp; 0xFFFFFFFF</span><br><span class="line">        x -= delta</span><br><span class="line">        x = x &amp; 0xFFFFFFFF</span><br><span class="line">        v0 -= (((v1 &lt;&lt; 4) ^ (v1 &gt;&gt; 5)) + v1) ^ (x + k[x &amp; 3])</span><br><span class="line">        v0 = v0 &amp; 0xFFFFFFFF</span><br><span class="line">    v[0] = v0</span><br><span class="line">    v[1] = v1</span><br><span class="line">    return v</span><br><span class="line"></span><br><span class="line">def crypt(plain):</span><br><span class="line">    res = b&#x27;&#x27;</span><br><span class="line">    for ii in range(4):</span><br><span class="line">        left = int.from_bytes(plain[ii*8:ii*8+4],&#x27;big&#x27;)</span><br><span class="line">        right= int.from_bytes(plain[ii*8+4:ii*8+8],&#x27;big&#x27;)</span><br><span class="line">        for i in range(0x2c):</span><br><span class="line">            ebx = rol(left,1,32) &amp; rol(left,8,32)</span><br><span class="line">            ebx ^= rol(left,2,32)</span><br><span class="line">            ebx ^= right</span><br><span class="line">            ebx ^= dword_80AFB60[i]</span><br><span class="line">            right = left</span><br><span class="line">            left = ebx</span><br><span class="line">        print(hex(left),hex(right))</span><br><span class="line">        left, right = xtea_encrypt(2**(ii+1),[right,left],xtea_key)</span><br><span class="line">        res += left.to_bytes(4,&#x27;little&#x27;)+right.to_bytes(4,&#x27;little&#x27;)</span><br><span class="line">    return res</span><br><span class="line"></span><br><span class="line">def decrypt(cipher):</span><br><span class="line">    res = b&#x27;&#x27;</span><br><span class="line">    for ii in range(4):</span><br><span class="line">        left = int.from_bytes(cipher[ii*8:ii*8+4],&#x27;little&#x27;)</span><br><span class="line">        right= int.from_bytes(cipher[ii*8+4:ii*8+8],&#x27;little&#x27;)</span><br><span class="line">        right, left = xtea_decrypt(2**(ii+1),[left,right],xtea_key)</span><br><span class="line">        for i in range(0x2b,-1,-1):</span><br><span class="line">            ebx = rol(right,1,32) &amp; rol(right,8,32) </span><br><span class="line">            ebx ^= rol(right,2,32)</span><br><span class="line">            ebx ^= dword_80AFB60[i]</span><br><span class="line">            last_right = ebx ^ left</span><br><span class="line">            left = right</span><br><span class="line">            right = last_right</span><br><span class="line">        res += left.to_bytes(4,&#x27;big&#x27;)+right.to_bytes(4,&#x27;big&#x27;)</span><br><span class="line">    return res</span><br><span class="line"></span><br><span class="line">print(decrypt(cmp))</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://127.0.0.1:6806/assets/image-20220426113928-c7xqpp2.png" alt="image.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">*CTF&#123;mM7pJIobsCTQPO6R0g-L8kFExhYuivBN&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2022DASCTF-x-SU-Re-login（Socket-amp-RSA-amp-Hill-amp-AES）"><a href="#2022DASCTF-x-SU-Re-login（Socket-amp-RSA-amp-Hill-amp-AES）" class="headerlink" title="2022DASCTF x SU-Re-login（Socket&amp;RSA&amp;Hill&amp;AES）"></a><strong>2022DASCTF x SU-Re-login（Socket&amp;RSA&amp;Hill&amp;AES）</strong></h2><h3 id="前言-1"><a href="#前言-1" class="headerlink" title="前言"></a>前言</h3><p>就是想复现</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426124752-d8mz7d6.png" alt="image.png"></p>
+<h3 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h3><p>前置知识就是这一张图，我们的两个文件一个是客户端一个是服务器端，check应该是服务器端。</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426134154-ibzlj59.png" alt="image.png"></p>
+<h3 id="代码的复原"><a href="#代码的复原" class="headerlink" title="代码的复原"></a>代码的复原</h3><p>我们看了上面的图，可以基本判定，服务器端就是check，猜测客户端的就是应该为输入数值，然后传输到TCP端进行一个check</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426134500-2ju8s3t.png" alt="image.png"></p>
+<p>我们将两个文件都进行一个反编译</p>
+<p>我们先分析check，先根据start找到main函数，进行一个重命名</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426140133-l44dzco.png" alt="image.png"></p>
+<p>因为这个是一个静态链接的东西，一些函数都是作者自己写的</p>
+<p>我们跟进函数然后去看看：</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426140412-blkmj9x.png" alt="image.png"></p>
+<p>这些肯定不是作者自己去写的函数，是socket协议的一个东西，然后我们回去看刚才我们的那个流程图</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426140510-abfi4x8.png" alt="image.png"></p>
+<p>然后我们往后看</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426140528-pwtj2zi.png" alt="image.png"></p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426140546-rgutmul.png" alt="image.png"></p>
+<p>发现了这样的一个函数，正对应了上面的流程图的东西，</p>
+<p>我们就根据这个流程图去重命名一下这个函数中的流程</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426141318-l0pru3s.png" alt="image.png"></p>
+<p>大概就是这样，然后我们就同理复原一下login</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426141823-w5vpmv9.png" alt="image.png"></p>
+<h3 id="恢复结构体"><a href="#恢复结构体" class="headerlink" title="恢复结构体"></a>恢复结构体</h3><p>我们可以知道在socket中，有个这样的东西</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">int</span> bind(<span class="built_in">int</span> sock, struct sockaddr *addr, socklen_t addrlen);  </span><br></pre></td></tr></table></figure>
+
+<p>其中有一个结构体struct sockaddr *addr，sockaddr 结构体变量的指针存储的是我们需要传输的一些信息</p>
+<p>但是我们的ida并不知道这个结构体在哪需要我们去手动恢复一下这个结构体</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426142432-8bgyoqs.png" alt="image.png"></p>
+<p>修复了之后我们可以看到有些东西就十分明了了</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426142926-aoez8kl.png" alt="image.png"></p>
+<h3 id="动态调试分析socket"><a href="#动态调试分析socket" class="headerlink" title="动态调试分析socket"></a>动态调试分析socket</h3><p>在动调的时候我们发现，会在这个地方强制退出，敲</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426144433-mhzhh11.png" alt="image.png"></p>
+<p>（由于太菜了我去请教了一下大佬。</p>
+<p>是因为在sin_port的地方有一个反调试，解决方法就是在remote调试的端口中，把端口改成本地存在的地方，我们通过调试的找到本地的端口。我们在上一个端口上看到了socket port端口我们跟进去看一下</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426143134-v7hsbwh.png" alt="image.png"></p>
+<p>port是1234</p>
+<p>然后我们将调试的端口整成1234</p>
+<p>这样的话我们就可以连上继续调试了</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426145343-kp76ri8.png" alt="image.png"></p>
+<p>下面就可以正常的通过了bin这个检测</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426145307-3ff4osv.png" alt="image.png"></p>
+<p>我们继续往下调试，一直到接受的那里</p>
+<p>到这里我们调试不动了，这个时候我们就应该去运行我们的login文件了</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426150301-4l96qov.png" alt="image.png"></p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426150338-s323bsl.png" alt="image.png"></p>
+<p>然后可以继续往下调试</p>
+<p>这里让我们输入一个token，我们先随便输入一个1234</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426150438-xwv60sv.png" alt="image.png"></p>
+<p>又有密码，同样是输入1234</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426150711-bworflf.png" alt="image.png"></p>
+<p>然后输入错了哈哈哈</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426150755-fvzj09b.png" alt="image.png"></p>
+<p>然后我们发现了一处奇特的地方</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426153042-odm7uii.png" alt="image.png"></p>
+<p>像这两句话，是存在于check文件中的，而这里室友login打印出来的，所以说这样的交互就是，一句话利用socket将这句话打印出来，然后输入出入给check进行一个检查，大概就是这一个工作流程。我们也就可以通过一个这样的工作流程去逆向。</p>
+<h3 id="逆向获得token和passwd"><a href="#逆向获得token和passwd" class="headerlink" title="逆向获得token和passwd"></a>逆向获得token和passwd</h3><p>我们linkstar的函数里面分析出来的函数为</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426153946-5exa5ci.png" alt="image.png"></p>
+<p>我们在进入到第三个if的时候，只要是我们不让程序输出v20，那么我们就成功了</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426154216-5uw5rrg.png" alt="image.png"></p>
+<p>那么我们就要通过这个检测。</p>
+<p>然后我们去看login中，同理恢复一下login的函数，大概就是这个样子。</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426155241-o4nmimg.png" alt="image.png"></p>
+<p>然后的话我们就需要双线程的进行分析了。</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426155807-11vm087.png" alt="image.png"></p>
+<p>然后到了下面，就是接受一个数据然后发送给服务器端</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426160222-6km094m.png" alt="image.png"></p>
+<p>那这个就是第一次输入的一个token，同理也是这么接受的passwd</p>
+<p>然后我们就是跟进刚才的那个判断。</p>
+<p>我们先分析token_check</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426161207-w0n8ztd.png" alt="image.png"></p>
+<p>这里应该是一种加密，但是不知道是什么emmm，，，我们发现了10001，10001容易让我想到rsa确实，搜一下就RSA，那么我们就可以整一下进行一个加密。</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426161549-bc36820.png" alt="image.png"></p>
+<p>然后我们进行一个rsa的解密</p>
+<p>在线网站分解一下n</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426162207-6mmj1n6.png" alt="image.png"></p>
+<p>有脚本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> gmpy2</span><br><span class="line"></span><br><span class="line">n = <span class="number">13123058934861171416713230498081453101147538789122070079961388806126697916963123413431108069961369055630747412550900239402710827847917960870358653962948282381351741121884528399369764530446509936240262290248305226552117100584726616255292963971141510518678552679033220315246377746270515853987903184512948801397452104554589803725619076066339968999308910127885089547678968793196148780382182445270838659078189316664538631875879022325427220682805580410213245364855569367702919157881367085677283124732874621569379901272662162025780608669577546548333274766058755786449491277002349918598971841605936268030140638579388226573929</span></span><br><span class="line">p = <span class="number">98197216341757567488149177586991336976901080454854408243068885480633972200382596026756300968618883148721598031574296054706280190113587145906781375704611841087782526897314537785060868780928063942914187241017272444601926795083433477673935377466676026146695321415853502288291409333200661670651818749836420808033</span></span><br><span class="line">q = <span class="number">133639826298015917901017908376475546339925646165363264658181838203059432536492968144231040597990919971381628901127402671873954769629458944972912180415794436700950304720548263026421362847590283353425105178540468631051824814390421486132775876582962969734956410033443729557703719598998956317920674659744121941513</span></span><br><span class="line">e = <span class="number">0x10001</span></span><br><span class="line">phi = (q-<span class="number">1</span>)*(p-<span class="number">1</span>)</span><br><span class="line">c = <span class="string">b&#x27;By reading we enrich the mind, by conversation we polish it.&#x27;</span></span><br><span class="line">c = <span class="built_in">int</span>.from_bytes(c,<span class="string">&#x27;little&#x27;</span>)</span><br><span class="line">d = gmpy2.invert(e,phi)</span><br><span class="line">m = gmpy2.powmod(c,d,n)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(m)</span><br><span class="line"></span><br><span class="line"><span class="comment">#11963777321199993924175387978397443935563034091716786597947508874393819454915798980986262132792605021295930274531653741552766395859285325677395421549163602968276475448835066393456449574469736327622969755801884982386140722904578598391534204834007447860153096480268812700725451958035204357033892179559153729604237187552716580637492579876006993181920209114166153317182827927606249871955662032809256743464460825303610341043145126848787575238499023185150429072724679210155061579052743238859739734301162335989939278904459012917375108407803445722785027315562371588439877746983153339473213449448259686486917983129418859935686</span></span><br></pre></td></tr></table></figure>
+
+<p>这样是得出了token。</p>
+<p>再看passwd_check</p>
+<p> 是一个hill加密，套板子解出就可以了吼吼。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">5132d202c32d95b9f978d514e3294220513b15623482b4c02e9afde8bad5ec07486a5488</span><br></pre></td></tr></table></figure>
+
+<p>这样的话我们就通过了检测</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426170044-mj0lbcc.png" alt="image.png"></p>
+<p>然后才来到了flag的检测。</p>
+<h3 id="逆向出flag"><a href="#逆向出flag" class="headerlink" title="逆向出flag"></a>逆向出flag</h3><p>大概之后是从这里面开始，接受一串数据，就是我们输入的flag，我们发下这边只有一个接受，之前并没有send什么东西，这就是意味着在login中有一个特殊的发送</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426170229-072bt3n.png" alt="image.png"></p>
+<p>我们分析login发现在login中有一个发送</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426170534-gfshj7m.png" alt="image.png"></p>
+<p>发送了一个这个东西</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426170558-0v9gnkq.png" alt="image.png"></p>
+<p>那么我们接受了这串数据之后就存放进了这个全局变量里面</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426170740-0e076fw.png" alt="image.png"></p>
+<p>我们再来看4058D8这个函数，跟进</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426170930-fjqw5qy.png" alt="image.png"></p>
+<p>分析可知，这个就是将我们得到的数据转换成数组的作用</p>
+<p>我们上百度搜一下</p>
+<p>这就是AES了呗哈哈哈哈。</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426171121-y6gz1m8.png" alt="image.png"></p>
+<p>然后我们需要找到检验的密文,那我们就知道这个函数是一个AES加密</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426171303-9qh1a5i.png" alt="image.png"></p>
+<p>十分生猛的AES加密，所以这里面也是比较复杂的需要分析。</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426171641-dnru2uu.png" alt="image.png"></p>
+<p>分析省略，过程太复杂了呜呜呜。</p>
+<p>最后得到的flag为</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">7026271d7bb5d404d63a72b88e6b4d63</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220426172200-53kjhwm.png" alt="image.png"></p>
+</div>
+</article>
+
+  </main>
+  <aside>
+    <p>This is an `aside`, a useful place to put information of any kind: metadata about the site author (with or without pictures), brief information about the purposes of the site, a static collection of external links or anything else.</p>
+<p>For some Classless themes pictures and data about the author may suit better in the `cover` and `description` site attributes (see `config.toml`), but most of the times that kind of information will fit here better.</p>
+
+  </aside>
+  <footer role="contentinfo">
+    <p>A default site footer. If you don't know what to place here maybe you should just write your name plus the current year?</p>
+<p>If you want to have a sitemap, a contact form or other complex stuff, most Classless themes will also handle it nicely. Or you can take a look at the <code>aside.html</code> partial.</p>
+
+  </footer>
+</body>

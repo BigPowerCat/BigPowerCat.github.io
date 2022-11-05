@@ -1,0 +1,108 @@
+<!doctype html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="&lt;p&gt;StringBuilder 类在 Java 5 中被提出，它和 StringBuffer 之间的最大不同在于 StringBuilder 的方法不是线程安全的（不能同步访问）。&lt;/p&gt;
+&lt;p&gt;由于 StringBuilder 相较于 StringBuffer 有速度优势，所以多数情况下建议使用 StringBuilder 类。&lt;/p&gt;
+&lt;figure class=&#34;highlight jav">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=yes">
+  <title>Java StringBuilder 类 | powercat</title>
+
+  <link rel="stylesheet" id="chosen-theme" href="https://rawgit.com/fiatjaf/classless/master/themes/plain/theme.css">
+  <script>
+let link = document.getElementById('chosen-theme')
+let widget = document.createElement('div')
+widget.style.position = 'absolute'
+widget.style.right = '5px'
+widget.style.top = '2px'
+widget.style.background = 'beige'
+widget.style.color = '#444'
+widget.style.zIndex = 99
+widget.style.padding = '4px 8px'
+widget.innerHTML = `
+<label>
+  <p>No theme was set on <code>theme_config</code>.<br>
+     Choose a theme from the list to experiment with it:</p>
+  <select></select>
+</label>
+`
+fetch('https://api.github.com/repos/fiatjaf/classless/contents/themes')
+  .then(r => r.json())
+  .then(files => {
+    document.body.appendChild(widget)
+    let select = document.querySelector('select')
+    files
+      .filter(f => f.type === 'dir')
+      .forEach(f => {
+        let option = document.createElement('option')
+        option.value = f.name
+        option.innerHTML = f.name
+        select.appendChild(option)
+      })
+    let options = Array.from(select.querySelectorAll('option'))
+    let chosen = options[parseInt(Math.random() * options.length)]
+    chosen.selected = true
+    link.href = link.href.replace(/themes\/[^\/]+/, `themes/${chosen.value}`)
+    select.addEventListener('change', e => {
+      let chosen = e.target.value
+      link.href = link.href.replace(/themes\/[^\/]+/, `themes/${chosen}`)
+    })
+  })
+  .catch(console.log)
+  </script>
+
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body>
+  <header role="banner">
+      <a href="/">
+        
+          <img src="https://picsum.photos/640/480">
+        
+      </a>  
+    <h1>
+      <a href="/">powercat</a>
+    </h1>
+    <aside>
+      <p></p>
+    </aside>
+  </header>
+  
+  <main>
+    <article>
+  <header>
+  
+  <h1><a href="http://example.com/2022/07/23/java9/">Java StringBuilder 类</a></h1>
+  <aside>
+    
+    <time datetime="222022-07-23">
+      July 23rd 2022
+    </time>
+    
+    <ul>
+    
+      <li><a href="/tags/note/">note</a></li>
+    
+    </ul>
+  </aside>
+</header>
+
+  <div><p>StringBuilder 类在 Java 5 中被提出，它和 StringBuffer 之间的最大不同在于 StringBuilder 的方法不是线程安全的（不能同步访问）。</p>
+<p>由于 StringBuilder 相较于 StringBuffer 有速度优势，所以多数情况下建议使用 StringBuilder 类。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String args[])</span>&#123;</span><br><span class="line">        <span class="type">StringBuilder</span> <span class="variable">sb</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>(<span class="number">10</span>);</span><br><span class="line">        sb.append(<span class="string">&quot;Runoob..&quot;</span>);</span><br><span class="line">        System.out.println(sb);  </span><br><span class="line">        sb.append(<span class="string">&quot;!&quot;</span>);</span><br><span class="line">        System.out.println(sb); </span><br><span class="line">        sb.insert(<span class="number">8</span>, <span class="string">&quot;Java&quot;</span>);</span><br><span class="line">        System.out.println(sb); </span><br><span class="line">        sb.delete(<span class="number">5</span>,<span class="number">8</span>);</span><br><span class="line">        System.out.println(sb);  </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220723222002-1k7ii7i.png" alt="image.png"></p>
+</div>
+</article>
+
+  </main>
+  <aside>
+    <p>This is an `aside`, a useful place to put information of any kind: metadata about the site author (with or without pictures), brief information about the purposes of the site, a static collection of external links or anything else.</p>
+<p>For some Classless themes pictures and data about the author may suit better in the `cover` and `description` site attributes (see `config.toml`), but most of the times that kind of information will fit here better.</p>
+
+  </aside>
+  <footer role="contentinfo">
+    <p>A default site footer. If you don't know what to place here maybe you should just write your name plus the current year?</p>
+<p>If you want to have a sitemap, a contact form or other complex stuff, most Classless themes will also handle it nicely. Or you can take a look at the <code>aside.html</code> partial.</p>
+
+  </footer>
+</body>

